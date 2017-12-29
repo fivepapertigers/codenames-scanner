@@ -1,0 +1,3 @@
+rootProject.name = 'CodeNames'
+
+include ':app'
