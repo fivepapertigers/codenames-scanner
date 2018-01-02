@@ -9,8 +9,6 @@ import {
     cardWidthPixels, cardHeightPixels, cardLeftPixels, cardTopPixels
 } from './BoardDimensions';
 import { CardImage } from './Models';
-global.location = {}
-import TesseractCore from 'tesseract.js-core';
 import base64 from 'base-64';
 
 

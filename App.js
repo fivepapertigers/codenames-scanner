@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Image } from 'react-native';
 
 import { Board } from './Models';
 import { sliceImageIntoCards, detectWordsOnCardImage } from './ImageProcessor';
-import CameraExample from './components/CameraExample';
+import BoardCapture from './components/BoardCapture';
 import BoardOverlay from './components/BoardOverlay';
 
 
@@ -16,11 +16,17 @@ export default class App extends React.Component {
     image: null
   }
 
-  async imageCaptured(image) {
+  async imageCaptured(imagePath) {
+    const image = {uri: imagePath}
     this.setState({ image });
-    const cardImages = await sliceImageIntoCards(image, this.state.board);
-    cardImages.forEach(detectWordsOnCardImage);
-    this.setState({ cardImages });
+    Image.getSize(image.uri, (width, height) => {
+      image.width = width;
+      image.height = height;
+      this.setState({ image });
+    });
+    // const cardImages = await sliceImageIntoCards(image, this.state.board);
+    // cardImages.forEach(detectWordsOnCardImage);
+    // this.setState({ cardImages });
   }
 
   render() {
@@ -28,14 +34,15 @@ export default class App extends React.Component {
       return (
         <View>
           <Image source={this.state.image} style={{width: 400, height: 300}}/>
+          <Text>{this.state.image.width} x {this.state.image.height}</Text>
           {this.renderCardImages()}
         </View>
       )
     } else {
       return (
-        <CameraExample imageCaptured={this.imageCaptured.bind(this)}>
+        <BoardCapture imageCaptured={this.imageCaptured.bind(this)}>
           <BoardOverlay board={this.state.board} />
-        </CameraExample>
+        </BoardCapture>
       );
     }
   }
