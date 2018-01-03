@@ -5,16 +5,22 @@
  */
 
 import { ImageEditor, ImageStore } from 'react-native';
+import RNTesseractOcr from 'react-native-tesseract-ocr';
+import ImageResizer from 'react-native-image-resizer';
+
 import {
     cardWidthPixels, cardHeightPixels, cardLeftPixels, cardTopPixels
 } from './BoardDimensions';
 import { CardImage } from './Models';
 import base64 from 'base-64';
 
+const LANG_ENGLISH = 'eng';
 
-export function sliceImageIntoCards (image, board) {
+export async function sliceImageIntoCards (image, board) {
+
     const width = Math.round(cardWidthPixels(image.width)),
         height = Math.round(cardHeightPixels(image.height));
+
     return Promise.all(board.cards.map((card) => {
             const cropData = {
                 offset: {
@@ -26,22 +32,25 @@ export function sliceImageIntoCards (image, board) {
                     height: height
                 },
             };
-
-            return cropImage(image.uri, cropData)
+            return cropImage(`file://${image.path}`, cropData)
                 .then(uri => new CardImage(card, { uri, width, height }));
     }));
 }
 
 export async function detectWordsOnCardImage (cardImage) {
-    const imageData = await loadImage(cardImage.image.uri)
-    return Tesseract.recognize(imageData)
-        .then(console.log);
+    const path = cardImage.image.uri.replace('file://', '');
+    try {
+        const result = await RNTesseractOcr.startOcr(path, 'LANG_ENGLISH');
+    } catch (exp) {
+        throw new Error(`OCR error: ${exp}`);
+    }
+    this.cardImage.card.word = result;
 }
 
-function loadImage(uri) {
-    return new Promise((res, rej) => ImageStore.getBase64ForTag(uri, res, rej))
-        .then(base64.decode);
-}
+// function loadImage(uri) {
+//     return new Promise((res, rej) => ImageStore.getBase64ForTag(uri, res, rej))
+//         .then(base64.decode);
+// }
 
 function cropImage(uri, cropData) {
     return new Promise(

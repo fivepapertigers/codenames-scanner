@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text, View, TouchableOpacity, Dimensions } from 'react-native';
-import CameraKitCamera from 'react-native-camera-kit';
+import Camera from 'react-native-camera';
+import Orientation from 'react-native-orientation';
 
 const AspectRatios = {
   WIDE: 16.0 / 9,
@@ -12,34 +13,42 @@ export default class BoardCapture extends React.Component {
 
   async capture() {
     if (this.camera) {
-      const image = await this.camera.capture(false);
-      console.log(image);
+      const image = await this.camera.capture({});
       this.props.imageCaptured(image.path);
     }
   }
 
+
+  componentDidMount() {
+    // this locks the view to Landscape Mode
+    Orientation.lockToLandscapeLeft();
+  }
+
+
+  componentWillUnmount() {
+    Orientation.unlockAllOrientations();
+  }
+
   render() {
+    const dims = cameraDimensions(AspectRatios.NORMAL);
     return (
       <View
         style={{
           flex: 1,
-          flexDirection: 'row',
-          'backgroundColor': 'black'
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: 'black'
         }}>
-        <CameraKitCamera
+        <Camera
           type={Camera.constants.Type.back}
           ref={ref => { this.camera = ref; }}
-          cameraOptions={{
-            flashMode: 'auto',             // on/off/auto(default)
-            focusMode: 'on',               // off/on(default)
-            zoomMode: 'on',                // off/on(default)
-            ratioOverlay:'4:3',            // optional, ratio overlay on the camera and crop the image seamlessly
-            ratioOverlayColor: '#00000077' // optional
-          }}
+          aspect={Camera.constants.Aspect.fit}
+          orientation={Camera.constants.Orientation.auto}
+          captureQuality={Camera.constants.CaptureQuality.high}
           style={{
-            flex: 1,
-            justifyContent: 'flex-end',
-            alignItems: 'center'
+            height: dims.height,
+            width: dims.width,
+            backgroundColor: 'grey'
           }}
         >
           <View
@@ -54,16 +63,16 @@ export default class BoardCapture extends React.Component {
               onPress={this.capture.bind(this)}>
             </TouchableOpacity>
           </View>
-        </CameraKitCamera>
+        </Camera>
       </View>
     );
   }
 }
 
-// function cameraDimensions (ratio) {
-//   const { width, height } = Dimensions.get('window');
-//   if (width / height > ratio) {
-//     return { height, width: height * ratio }
-//   }
-//   return { width, height: width / ratio }
-// }
+function cameraDimensions (ratio) {
+  const { width, height } = Dimensions.get('window');
+  if (width / height > ratio) {
+    return { height, width: height * ratio }
+  }
+  return { width, height: width / ratio }
+}
