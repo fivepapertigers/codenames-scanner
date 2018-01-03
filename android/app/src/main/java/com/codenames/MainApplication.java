@@ -3,10 +3,6 @@ package com.codenames;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.imagepicker.ImagePickerPackage;
-import fr.bamlab.rnimageresizer.ImageResizerPackage;
-import com.reactlibrary.RNTesseractOcrPackage;
-import com.github.yamill.orientation.OrientationPackage;
 import com.lwansbrough.RCTCamera.RCTCameraPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -28,10 +24,6 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new ImagePickerPackage(),
-            new ImageResizerPackage(),
-            new RNTesseractOcrPackage(),
-            new OrientationPackage(),
             new RCTCameraPackage()
       );
     }
