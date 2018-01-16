@@ -62,8 +62,20 @@ const SINGLE_WORD_WEIGHT = 5;
 const CHARACTER_LENGTH_WEIGHT = 7;
 const TERM_LENGTH_RANGE = [3, 11];
 
+const TESSERACT_DIR = path.join(
+    process.cwd(),
+    "tesseract"
+);
+
+
+
 export async function findTermFromImage (imageBuffer) {
-    const resultData = await Tesseract.recognize(imageBuffer, {
+    const tess = Tesseract.create({
+        workerPath: path.join(TESSERACT_DIR, "src", "node", "worker.js"),
+        langPath: path.join(TESSERACT_DIR, "lang/"),
+        corePath: path.join(TESSERACT_DIR, "src", "index.js")
+    });
+    const resultData = await tess.recognize(imageBuffer, {
         lang: "eng",
         tessedit_char_whitelist: ONLY_CHARACTERS
     });

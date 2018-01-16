@@ -3,9 +3,6 @@ service: codenames-scanner
 plugins:
   - serverless-webpack
 
-package:
-  individually: true
-
 provider:
   name: aws
   versionFunctions: false
@@ -14,6 +11,13 @@ provider:
   timeout: 30
   environment:
     BUCKET: ${self:custom.bucketName}
+  iamRoleStatements:
+    -  Effect: "Allow"
+       Action:
+         - "s3:*"
+       Resource:
+         - arn:aws:s3:::${self:custom.bucketName}
+         - arn:aws:s3:::${self:custom.bucketName}/*
 
 
 functions:
@@ -38,7 +42,5 @@ functions:
 
 custom:
   webpack: ./webpack.config.js
-  webpackIncludeModules:
-    forceExclude:
-      - aws-sdk
   bucketName: codenames-scanner-${opt:stage}
+  loadTrainedData: ${file(./scripts/load-trained-data.js)}
