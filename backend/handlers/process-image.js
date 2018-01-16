@@ -14,6 +14,4 @@ async function processImage (event) {
     await new TermResult(file.name, term).save();
 }
 
-export default class Handler {
-    static handle = asyncHandler(processImage);
-}
+export const handler = asyncHandler(processImage);

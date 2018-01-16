@@ -3,7 +3,7 @@
  */
 
 import File from "../models/file";
-import Handler from "./authorize-upload";
+import { handler } from "./authorize-upload";
 
 jest.mock("../models/file",
     () => jest.genMockFromModule("../models/file"));
@@ -22,13 +22,13 @@ describe("handler function", async () => {
 
 
     it("instantiates a file", async () => {
-        await Handler.handle();
+        await handler();
         expect(File.mock.calls).toHaveLength(1);
         expect(File.mock.calls[0]).toEqual(["image-input"]);
     });
 
     it("gets links", async () => {
-        const { retrieve, save } = await Handler.handle();
+        const { retrieve, save } = await handler();
         expect(retrieve).toBe(RETRIEVE_LINK);
         expect(save).toBe(SAVE_LINK);
     });

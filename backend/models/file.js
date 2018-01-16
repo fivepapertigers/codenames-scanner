@@ -41,29 +41,24 @@ export default class File {
     }
 
     async getRetrievalLink () {
-        const s3 = new AWS.S3();
         const params = {
             Bucket: BUCKET,
             Expires: EXPIRATION,
             Key: this._s3Key()
         };
-        return await s3.getSignedUrl("getObject", params).promise();
+        return await getSignedUrl("getObject", params);
     }
 
     async getSaveLink () {
-        // format command URL
-        const s3 = new AWS.S3();
         const params = {
             Bucket: BUCKET,
             Expires: EXPIRATION,
             Key: this._s3Key(),
-            Conditions: [
-                ["content-length-range", 0, MAX_FILE_SIZE],
-            ]
+            // Conditions: [
+            //     ["content-length-range", 0, MAX_FILE_SIZE],
+            // ]
         };
-        return await s3.getSignedUrl("putObject", params).promise();
-        // format query URL
-
+        return await getSignedUrl("putObject", params);
     }
 
     _s3Key() {
@@ -73,4 +68,18 @@ export default class File {
 
 function formatS3Key (folder, fileName) {
     return `${folder}/${fileName}`;
+}
+
+async function getSignedUrl (method, params) {
+    return new Promise((res, rej) => {
+        const s3 = new AWS.S3();
+        s3.getSignedUrl(method, params, (err, url) => {
+            if (err) {
+                rej(err);
+            } else {
+                res(url);
+            }
+        });
+    });
+
 }

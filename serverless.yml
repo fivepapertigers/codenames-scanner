@@ -3,6 +3,9 @@ service: codenames-scanner
 plugins:
   - serverless-webpack
 
+package:
+  individually: true
+
 provider:
   name: aws
   versionFunctions: false
@@ -16,7 +19,7 @@ provider:
 functions:
   authorizeImageUpload:
     description: 'Authorizes uploading an image to S3'
-    handler: src/handlers/authorize-upload.handler
+    handler: backend/handlers/authorize-upload.handler
     events:
       - http:
           path: image/authorize
@@ -24,7 +27,7 @@ functions:
 
   processUploadedImage:
     description: 'Processes an uploaded image'
-    handler: src/handlers/process-image.handler
+    handler: backend/handlers/process-image.handler
     events:
       - s3:
           bucket: ${self:custom.bucketName}
@@ -35,4 +38,7 @@ functions:
 
 custom:
   webpack: ./webpack.config.js
+  webpackIncludeModules:
+    forceExclude:
+      - aws-sdk
   bucketName: codenames-scanner-${opt:stage}

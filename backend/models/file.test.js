@@ -6,8 +6,7 @@ import AWS from "aws-sdk-mock";
 
 import File from "./file";
 
-jest.mock("../config", () => ({BUCKET: "somebucket"}));
-jest.mock("rand-token", () => ({generate: () => "123456"}));
+jest.mock("../config", () => ({BUCKET: "somebucket", TOKEN_CHARACTER_SET: "A"}));
 
 const CONTENT = "somecontent";
 const MOCK_URL = "someurl";
@@ -88,7 +87,7 @@ describe("constructor", () => {
 
     it("randomly generates a name", () => {
         const file = new File("somecoll");
-        expect(file.name).toEqual("123456");
+        expect(file.name).toEqual("AAAAAA");
     });
 
 });

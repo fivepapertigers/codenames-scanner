@@ -1,15 +1,17 @@
-const slsw = require('serverless-webpack');
+const slsw = require("serverless-webpack");
+const webpack = require("webpack");
 
 module.exports = {
     entry: slsw.lib.entries,
-    target: 'node',
+    target: "node",
     module: {
         rules: [{
             test: /\.js$/,
             exclude: /(node_modules|bower_components)/,
             use: {
-                loader: 'babel-loader'
+                loader: "babel-loader"
             }
-        }]
-    }
+        }, { test: /\.json($|\?)/, use: "json-loader" }]
+    },
+    plugins: [new webpack.IgnorePlugin(/\/iconv-loader$/)]
 };

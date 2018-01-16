@@ -11,6 +11,4 @@ async function authorizeUpload () {
     return { retrieve, save };
 }
 
-export default class Handler {
-    static handle = apiProxyHandler(authorizeUpload);
-}
+export const handler = apiProxyHandler(authorizeUpload);
