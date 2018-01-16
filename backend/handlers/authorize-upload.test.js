@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 
 import File from "../models/file";
 import Handler from "./authorize-upload";

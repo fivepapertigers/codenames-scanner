@@ -1,3 +1,7 @@
+/**
+ * @jest-environment node
+ */
+
 import { findTermFromImage } from "./util/img-processor";
 import File from "../models/file";
 import Handler from "./process-image";

@@ -3,5 +3,6 @@
     "transform-class-properties",
     "transform-react-jsx-source"
   ],
-  "presets": ["es2015", "es2016", "es2017", "jest", "babel-preset-expo"]
+  "presets": ["babel-preset-expo", "es2015", "es2016", "es2017", "jest"],
+  "env": {}
 }

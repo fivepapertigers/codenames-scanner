@@ -1,13 +1,13 @@
-const shuffle = require('shuffle-array')
+const shuffle = require("shuffle-array");
 
 
 export const CardTypes = {
-  Blue: 'blue',
-  Red: 'red',
-  Bystander: 'bystander',
-  Assassin: 'assassin',
-  Wild: 'wild'
-}
+  Blue: "blue",
+  Red: "red",
+  Bystander: "bystander",
+  Assassin: "assassin",
+  Wild: "wild"
+};
 
 export const CardQuantities = {
   [CardTypes.Blue]: 8,
@@ -15,14 +15,14 @@ export const CardQuantities = {
   [CardTypes.Bystander]: 7,
   [CardTypes.Assassin]: 1,
   [CardTypes.Wild]: 1
-}
+};
 
 export const CardColors = {
-  [CardTypes.Blue]: 'blue',
-  [CardTypes.Red]: 'red',
-  [CardTypes.Bystander]: 'lightgrey',
-  [CardTypes.Assassin]: 'black'
-}
+  [CardTypes.Blue]: "blue",
+  [CardTypes.Red]: "red",
+  [CardTypes.Bystander]: "lightgrey",
+  [CardTypes.Assassin]: "black"
+};
 
 export class Card {
     constructor (row, column, word = null, type = null) {
@@ -35,16 +35,17 @@ export class Card {
 
     color () {
       if (this.type) {
-        return CardColors[this.type]
+        return CardColors[this.type];
       }
+      return null;
     }
 }
 
 export class Board {
   constructor () {
     this.cards = [];
-    for (let row = 0; row < 5; row ++) {
-      for (let col = 0; col < 5; col ++) {
+    for (let row = 0; row < 5; row++) {
+      for (let col = 0; col < 5; col++) {
         this.cards.push(new Card(row, col));
       }
     }
@@ -54,7 +55,9 @@ export class Board {
   regenerateSpyMap () {
     this.wildColor = Math.random() > .5 ? CardTypes.Blue : CardTypes.Red;
     let spyMap = getRandomSpyMap(this.wildColor);
-    this.cards.forEach((card, idx) => card.type = spyMap.pop());
+    this.cards.forEach(card => {
+        card.type = spyMap.pop();
+    });
   }
 }
 

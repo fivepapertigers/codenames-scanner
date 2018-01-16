@@ -3,10 +3,26 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
+    "aws-sdk-mock": "^1.7.0",
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.2.1",
+    "babel-jest": "^22.0.6",
     "babel-loader": "^7.1.2",
-    "jest-expo": "23.0.0",
+    "babel-plugin-jest-hoist": "^22.1.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-es2016": "^6.24.1",
+    "babel-preset-es2017": "^6.24.1",
+    "babel-preset-expo": "^4.0.0",
+    "eslint": "^4.15.0",
+    "eslint-plugin-jest": "^21.6.2",
+    "jest": "^22.0.6",
+    "jest-environment-node": "^22.1.0",
+    "jest-expo": "^24.0.0",
     "react-native-scripts": "1.8.1",
-    "react-test-renderer": "16.0.0",
+    "react-test-renderer": "^16.2.0",
+    "regenerator-runtime": "^0.11.1",
     "serverless": "^1.25.0",
     "serverless-webpack": "^4.2.0",
     "webpack": "^3.10.0"
@@ -17,19 +33,23 @@
     "eject": "react-native-scripts eject",
     "android": "react-native-scripts android",
     "ios": "react-native-scripts ios",
-    "test": "node node_modules/jest/bin/jest.js --watchAll",
-    "sls": "serverless"
-  },
-  "jest": {
-    "preset": "jest-expo"
+    "sls": "serverless",
+    "test-backend": "jest --config ./jest.backend.config.js",
+    "test-native": "jest --config ./jest.native.config.js",
+    "test": "yarn run test-backend && yarn run test-native",
+    "lint": "eslint --config ./.eslintrc src"
   },
   "dependencies": {
     "base-64": "^0.1.0",
+    "circular-json": "^0.5.1",
     "expo": "^23.0.4",
+    "rand-token": "^0.4.0",
     "react": "16.0.0",
     "react-native": "0.50.3",
     "shuffle-array": "^1.0.1",
-    "tesseract.js-core": "^1.0.2",
+    "simple-node-logger": "^0.93.33",
+    "tesseract.js": "^1.0.10",
     "uuid": "^3.1.0"
-  }
+  },
+  "license": "MIT"
 }

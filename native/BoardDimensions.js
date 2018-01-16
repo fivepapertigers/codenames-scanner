@@ -49,25 +49,25 @@
  * Ratio of the card width to the board
  * @type {[type]}
  */
-export const CARD_WIDTH_RATIO = 42 / 216
+export const CARD_WIDTH_RATIO = 42 / 216;
 
 /**
  * Ratio of the card height to the board
  * @type {[type]}
  */
-export const CARD_HEIGHT_RATIO = 26 / 162
+export const CARD_HEIGHT_RATIO = 26 / 162;
 
 /**
  * Ratio of the margin width to the board
  * @type {[type]}
  */
-export const MARGIN_WIDTH_RATIO = 3 / 216
+export const MARGIN_WIDTH_RATIO = 3 / 216;
 
 /**
  * Ratio of the margin height to the board
  * @type {[type]}
  */
-export const MARGIN_HEIGHT_RATIO = 16 / 162
+export const MARGIN_HEIGHT_RATIO = 16 / 162;
 
 /**
  * Width of a card given width of the board

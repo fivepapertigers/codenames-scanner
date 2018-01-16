@@ -1,3 +1,7 @@
+/**
+ * @jest-environment node
+ */
+
 import TermResult from "./term-result";
 
 import DataStore from "./util/data-store";

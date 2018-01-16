@@ -9,6 +9,8 @@ provider:
   runtime: nodejs6.10
   region: us-east-1
   timeout: 30
+  environment:
+    BUCKET: ${self:custom.bucketName}
 
 
 functions:
@@ -20,5 +22,17 @@ functions:
           path: image/authorize
           method: post
 
+  processUploadedImage:
+    description: 'Processes an uploaded image'
+    handler: src/handlers/process-image.handler
+    events:
+      - s3:
+          bucket: ${self:custom.bucketName}
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: image-input
+
+
 custom:
   webpack: ./webpack.config.js
+  bucketName: codenames-scanner-${opt:stage}
