@@ -1,48 +1,16 @@
-import { AWS } from 'aws-sdk';
-import { uuid4 } from 'uuid';
+import { UPLOAD_FOLDER } from "../config";
 
-const S3 = new AWS.S3();
-const UPLOAD_BUCKET = 'codenames-scanner';
-const EXPIRATION = 120; // 2 minutes
-const MAX_FILE_SIZE = 10485760;
-const FOLDER = 'image-input'
+import File from "../models/file";
+import { apiProxyHandler } from "./util/lambda-handler";
 
-const DEFAULT_PARAMS = {
-    Bucket: UPLOAD_BUCKET,
-    Expires: EXPIRATION,
-    Conditions: [
-        ['content-length-range', 0, MAX_FILE_SIZE],
-    ]
-};
+async function authorizeUpload () {
 
-export function handler (event, context, callback) {
-    const body = event.body;
-    const fileName = uuid4();
-    const key = `${FOLDER}/${filename}`;
-    const data = Object.assign({ key }, DEFAULT_PARAMS);
-
-    S3.getSignedUrl('putObject', params, function (err, url) {
-        if (err) {
-            console.error(err);
-            raiseServerError(callback);
-        } else {
-            formatResponse(200, { url }, callback);
-        }
-    });
+    const file = new File(UPLOAD_FOLDER);
+    const retrieve = await file.getRetrievalLink();
+    const save = await file.getSaveLink();
+    return { retrieve, save };
 }
 
-function raiseServerError (callback) {
-    return formatResponse(500, {'error': 'Server Error'});
-}
-
-function formatResponse (status, body, callback) {
-    return {
-        'statusCode': 200,
-        'headers': {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Credentials': true,
-            'Content-Type': 'application/json'
-        },
-        'body': body
-    }
+export default class Handler {
+    static handle = apiProxyHandler(authorizeUpload);
 }
