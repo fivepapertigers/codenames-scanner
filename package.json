@@ -31,7 +31,7 @@
     "serverless-webpack": "^4.2.0",
     "webpack": "^3.10.0"
   },
-  "main": "./node_modules/react-native-scripts/build/bin/crna-entry.js",
+  "main": "./native/App.js",
   "scripts": {
     "start": "react-native-scripts start",
     "eject": "react-native-scripts eject",
@@ -44,6 +44,7 @@
     "lint": "eslint --config ./.eslintrc src"
   },
   "dependencies": {
+    "babel-preset-react-native": "2.1.0",
     "base-64": "^0.1.0",
     "circular-json": "^0.5.1",
     "encoding": "git+https://git@github.com/fivepapertigers/encoding.git#938d4129bcf5367a3e458d80306214ac085059a3",

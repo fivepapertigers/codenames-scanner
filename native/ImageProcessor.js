@@ -4,14 +4,11 @@
  * @description logic for processing capture images
  */
 
-import { ImageEditor, ImageStore } from 'react-native';
+import { ImageEditor } from "react-native";
 import {
     cardWidthPixels, cardHeightPixels, cardLeftPixels, cardTopPixels
-} from './BoardDimensions';
-import { CardImage } from './Models';
-global.location = {}
-import TesseractCore from 'tesseract.js-core';
-import base64 from 'base-64';
+} from "./BoardDimensions";
+import { CardImage } from "./Models";
 
 
 export function sliceImageIntoCards (image, board) {
@@ -32,17 +29,6 @@ export function sliceImageIntoCards (image, board) {
             return cropImage(image.uri, cropData)
                 .then(uri => new CardImage(card, { uri, width, height }));
     }));
-}
-
-export async function detectWordsOnCardImage (cardImage) {
-    const imageData = await loadImage(cardImage.image.uri)
-    return Tesseract.recognize(imageData)
-        .then(console.log);
-}
-
-function loadImage(uri) {
-    return new Promise((res, rej) => ImageStore.getBase64ForTag(uri, res, rej))
-        .then(base64.decode);
 }
 
 function cropImage(uri, cropData) {
