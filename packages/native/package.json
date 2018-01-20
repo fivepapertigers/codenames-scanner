@@ -12,6 +12,9 @@
     "react-test-renderer": "^16.2.0",
     "webpack": "^3.10.0"
   },
+  "jest": {
+    "preset": "jest-expo"
+  },
   "license": "MIT",
   "main": "./native/App.js",
   "name": "codenames-scanner-native",
@@ -23,9 +26,7 @@
     "lint": "eslint --config ./.eslintrc src",
     "sls": "serverless",
     "start": "react-native-scripts start",
-    "test": "yarn run test-backend && yarn run test-native",
-    "test-backend": "jest --config ./jest.backend.config.js",
-    "test-native": "jest --config ./jest.native.config.js"
+    "test": "jest"
   },
   "version": "0.1.0"
 }
