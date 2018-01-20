@@ -11,11 +11,10 @@ export async function authorizeS3Retrieval(key) {
         Expires: EXPIRATION,
         Key: key
     };
-    return getSignedUrl("getObject", params);
+    return promisify("S3", "getSignedUrl")("getObject", params);
 }
 
 export async function authorizeS3Post(key) {
-    const s3 = new AWS.S3();
     const params = {
         Bucket: BUCKET,
         Expires: EXPIRATION,
@@ -24,38 +23,34 @@ export async function authorizeS3Post(key) {
             ["eq", "$key", key]
         ]
     };
-    const result = await s3.createPresignedPost(params).promise();
+    const result = await promisify("S3", "createPresignedPost")(params);
     return result.Fields;
 }
 
 export async function loadS3File (key) {
-    const s3 = new AWS.S3();
     const params = {Bucket: BUCKET, Key: key};
-    const data = await s3.getObject(params).promise();
+    const data = await promisify("S3", "getObject")(params);
     return data.Body;
 }
 
-
 export async function saveS3File (key, contents) {
-    const s3 = new AWS.S3();
     const params = {
         Bucket: BUCKET,
         Key: key,
         Body: contents
     };
-    await s3.putObject(params).promise();
+    await promisify("S3", "putObject")(params);
     return;
 }
 
 
-async function getSignedUrl (method, params) {
-    return new Promise((res, rej) => {
-        const s3 = new AWS.S3();
-        s3.getSignedUrl(method, params, (err, url) => {
+function promisify (service, method) {
+    return async (...params) => new Promise((res, rej) => {
+        return new AWS[service]()[method](...params, (err, data) => {
             if (err) {
                 rej(err);
             } else {
-                res(url);
+                res(data);
             }
         });
     });
