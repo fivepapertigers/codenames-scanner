@@ -56,7 +56,8 @@ describe("createPresignedPost method", async () => {
 
     const FIELDS = "somefields";
     const MOCK_RESPONSE = {
-        Fields: FIELDS
+        url: MOCK_URL,
+        fields: FIELDS
     };
 
     beforeEach(async () => {
@@ -88,7 +89,7 @@ describe("createPresignedPost method", async () => {
 
     it("returns the fields", async () => {
         const fields = await authorizeS3Post(KEY);
-        expect(fields).toEqual(FIELDS);
+        expect(fields).toEqual(MOCK_RESPONSE);
     });
 
 });
