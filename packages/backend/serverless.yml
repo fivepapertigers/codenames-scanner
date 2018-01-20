@@ -23,7 +23,7 @@ provider:
 functions:
   authorizeImageUpload:
     description: 'Authorizes uploading an image to S3'
-    handler: backend/handlers/authorize-upload.handler
+    handler: src/handlers/authorize-upload.handler
     events:
       - http:
           path: image/authorize
@@ -31,7 +31,7 @@ functions:
 
   processUploadedImage:
     description: 'Processes an uploaded image'
-    handler: backend/handlers/process-image.handler
+    handler: src/handlers/process-image.handler
     events:
       - s3:
           bucket: ${self:custom.bucketName}
