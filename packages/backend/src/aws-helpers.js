@@ -24,7 +24,7 @@ export async function authorizeS3Post(key) {
         ]
     };
     const result = await promisify("S3", "createPresignedPost")(params);
-    return result.Fields;
+    return result.fields;
 }
 
 export async function loadS3File (key) {
