@@ -2,48 +2,40 @@
  * @jest-environment node
  */
 
-import AWS from "aws-sdk-mock";
-
 import File from "./file";
+import { loadS3File, saveS3File } from "../aws-helpers";
 
-jest.mock("../config", () => ({BUCKET: "somebucket", TOKEN_CHARACTER_SET: "A"}));
+jest.mock("../config", () => ({TOKEN_CHARACTER_SET: "A"}));
+jest.mock("../aws-helpers");
 
 const CONTENT = "somecontent";
-const MOCK_URL = "someurl";
+const FOLDER = "somecoll";
+const FILE_NAME = "someid";
+const FULL_PATH = "somecoll/someid";
 
-let callback;
+beforeEach(() => {
+    loadS3File.mockReturnValue(CONTENT);
+    saveS3File.mockReturnValue(undefined);
+});
+
+afterEach(() => {
+    loadS3File.mockReset();
+    saveS3File.mockReset();
+});
 
 describe("load static method", async () => {
 
-    let mockGet;
-
-    beforeEach(async () => {
-        mockGet = jest.fn();
-        AWS.mock("S3", "getObject", mockGet);
-        mockGet.mockImplementation((params, cb) => {
-            callback = cb;
-            cb(null, {Body: CONTENT});
-        });
-    });
-
-    afterEach(() => {
-        AWS.restore("S3");
-    });
-
     it("retrieves from s3", async () => {
-        await File.load("somecoll", "someid");
-        expect(mockGet.mock.calls).toHaveLength(1);
-        expect(mockGet.mock.calls[0]).toEqual([{
-            "Key": "somecoll/someid",
-            "Bucket": "somebucket",
-        }, callback]);
+        await File.load(FOLDER, FILE_NAME);
+        expect(loadS3File.mock.calls).toHaveLength(1);
+        expect(loadS3File.mock.calls[0]).toEqual([FULL_PATH]);
     });
 
     it("returns a File instance", async () => {
-        const file = await File.load("somecoll", "someid");
+        const file = await File.load(FOLDER, FILE_NAME);
         expect(file.contents).toEqual(CONTENT);
-        expect(file.folder).toEqual("somecoll");
-        expect(file.name).toEqual("someid");
+        expect(file.folder).toEqual(FOLDER);
+        expect(file.name).toEqual(FILE_NAME);
     });
 
 });
@@ -51,26 +43,17 @@ describe("load static method", async () => {
 
 describe("loadFromPath static method", async () => {
 
-    let mockGet;
-
-    beforeEach(async () => {
-        mockGet = jest.fn();
-        AWS.mock("S3", "getObject", mockGet);
-        mockGet.mockImplementation((params, cb) => {
-            callback = cb;
-            cb(null, {Body: CONTENT});
-        });
-    });
-
-    afterEach(() => {
-        AWS.restore("S3");
+    it("retrieves from s3", async () => {
+        await File.loadFromPath(FULL_PATH);
+        expect(loadS3File.mock.calls).toHaveLength(1);
+        expect(loadS3File.mock.calls[0]).toEqual([FULL_PATH]);
     });
 
     it("returns a File instance", async () => {
-        const file = await File.loadFromPath("somecoll/someid");
+        const file = await File.loadFromPath(FULL_PATH);
         expect(file.contents).toEqual(CONTENT);
-        expect(file.folder).toEqual("somecoll");
-        expect(file.name).toEqual("someid");
+        expect(file.folder).toEqual(FOLDER);
+        expect(file.name).toEqual(FILE_NAME);
     });
 
 });
@@ -79,14 +62,14 @@ describe("loadFromPath static method", async () => {
 describe("constructor", () => {
 
     it("instantiates a new file", () => {
-        const file = new File("somecoll", "someid", CONTENT);
+        const file = new File(FOLDER, FILE_NAME, CONTENT);
         expect(file.contents).toEqual(CONTENT);
-        expect(file.folder).toEqual("somecoll");
-        expect(file.name).toEqual("someid");
+        expect(file.folder).toEqual(FOLDER);
+        expect(file.name).toEqual(FILE_NAME);
     });
 
     it("randomly generates a name", () => {
-        const file = new File("somecoll");
+        const file = new File(FOLDER);
         expect(file.name).toEqual("AAAAAA");
     });
 
@@ -95,113 +78,15 @@ describe("constructor", () => {
 
 describe("save method", async () => {
 
-    let mockPut;
-
-    beforeEach(async () => {
-        mockPut = jest.fn();
-        AWS.mock("S3", "putObject", mockPut);
-        mockPut.mockImplementation((params, cb) => {
-            callback = cb;
-            cb();
-        });
-    });
-
-    afterEach(() => {
-        AWS.restore("S3");
-    });
-
     it("puts the file in S3", async () => {
-        new File("somecoll", "someid", CONTENT).save();
-        expect(mockPut.mock.calls).toHaveLength(1);
-        expect(mockPut.mock.calls[0]).toEqual([{
-            "Key": "somecoll/someid",
-            "Bucket": "somebucket",
-            "Body": CONTENT,
-        }, callback]);
+        new File(FOLDER, FILE_NAME, CONTENT).save();
+        expect(saveS3File.mock.calls).toHaveLength(1);
+        expect(saveS3File.mock.calls[0]).toEqual([FULL_PATH, CONTENT]);
     });
 
     it("does not return", async () => {
-        const res = await new File("somecoll", "someid", CONTENT).save();
+        const res = await new File(FOLDER, FILE_NAME, CONTENT).save();
         expect(res).toBe(undefined);
     });
 
 });
-
-
-describe("getRetievalLink method", async () => {
-
-    let mockSignUrl;
-
-    beforeEach(async () => {
-        mockSignUrl = jest.fn();
-        AWS.mock("S3", "getSignedUrl", mockSignUrl);
-        mockSignUrl.mockImplementation((meth, params, cb) => {
-            callback = cb;
-            cb(null, MOCK_URL);
-        });
-    });
-
-    afterEach(() => {
-        AWS.restore("S3");
-    });
-
-    it("gets the link from S3", async () => {
-        const file = new File("somecoll", "someid", CONTENT);
-        file.getRetrievalLink();
-        expect(mockSignUrl.mock.calls).toHaveLength(1);
-        expect(mockSignUrl.mock.calls[0]).toEqual([
-        "getObject",
-        {
-            "Key": "somecoll/someid",
-            "Bucket": "somebucket",
-            "Expires": 120,
-        }, callback]);
-    });
-
-    it("returns the link", async () => {
-        const file = new File("somecoll", "someid", CONTENT);
-        const url = await file.getRetrievalLink();
-        expect(url).toEqual(MOCK_URL);
-    });
-});
-
-
-describe("getSaveLink method", async () => {
-
-    let mockSignUrl;
-
-    beforeEach(async () => {
-        mockSignUrl = jest.fn();
-        AWS.mock("S3", "getSignedUrl", mockSignUrl);
-        mockSignUrl.mockImplementation((meth, params, cb) => {
-            callback = cb;
-            cb(null, MOCK_URL);
-        });
-    });
-
-    afterEach(() => {
-        AWS.restore("S3");
-    });
-
-    it("gets the link from S3", async () => {
-        const file = new File("somecoll", "someid", CONTENT);
-        file.getSaveLink();
-        expect(mockSignUrl.mock.calls).toHaveLength(1);
-        expect(mockSignUrl.mock.calls[0]).toEqual([
-        "putObject",
-        {
-            "Key": "somecoll/someid",
-            "Bucket": "somebucket",
-            "Expires": 120,
-            // "Conditions": [["content-length-range", 0, 10485760]]
-        }, callback]);
-    });
-
-    it("returns the link", async () => {
-        const file = new File("somecoll", "someid", CONTENT);
-        const url = await file.getSaveLink();
-        expect(url).toEqual(MOCK_URL);
-    });
-
-});
-
