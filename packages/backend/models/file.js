@@ -1,3 +1,5 @@
+/* eslint-env node, es6 */
+
 import path from "path";
 import AWS from "aws-sdk";
 import randtoken from "rand-token";
@@ -6,7 +8,7 @@ import { BUCKET, TOKEN_CHARACTER_SET } from "../config";
 
 
 const EXPIRATION = 120; // 2 minutes
-const MAX_FILE_SIZE = 10485760;
+// const MAX_FILE_SIZE = 10485760;
 
 export default class File {
 

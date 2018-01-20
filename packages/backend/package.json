@@ -30,7 +30,7 @@
   "name": "codenames-scanner-backend",
   "private": true,
   "scripts": {
-    "lint": "eslint",
+    "lint": "eslint ./",
     "test": "jest"
   },
   "jest": {

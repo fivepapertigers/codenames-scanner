@@ -1,6 +1,5 @@
-/**
- * @jest-environment node
- */
+/* eslint-env node, es6 */
+/* @jest-environment node */
 
 import fs from "fs";
 import path from "path";
@@ -19,7 +18,7 @@ describe("processImage function", async () => {
 
     it("correctly pulls terms from images", async () => {
         for (const [filename, term] of FILE_TERM_MAP) {
-            const img = fs.readFileSync(path.join(__dirname, "assets", filename))
+            const img = fs.readFileSync(path.join(__dirname, "assets", filename));
             const result = await findTermFromImage(img);
             expect(result).toBe(term);
         }

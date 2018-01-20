@@ -83,7 +83,7 @@ export async function findTermFromImage (imageBuffer) {
     const tess = Tesseract.create(opts);
     const resultData = await tess.recognize(imageBuffer, {
         lang: "eng",
-        tessedit_char_whitelist: ONLY_CHARACTERS
+        tessedit_char_whitelist: ONLY_CHARACTERS // eslint-disable-line camelcase
     });
 
     return findTermFromResult(resultData);

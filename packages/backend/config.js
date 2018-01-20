@@ -1,4 +1,4 @@
-/*eslint no-process-env: 0*/
+/* eslint-env node */
 import Logger from "simple-node-logger";
 
 export const UPLOAD_FOLDER = "image-input";
