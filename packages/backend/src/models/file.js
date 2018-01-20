@@ -17,7 +17,7 @@ export default class File {
     }
 
     static async load (folder, fileName) {
-        const contents = loadS3File(formatFilePath(folder, fileName));
+        const contents = await loadS3File(formatFilePath(folder, fileName));
         return new File(folder, fileName, contents);
     }
 

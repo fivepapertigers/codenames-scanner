@@ -25,5 +25,5 @@ module.exports = {
     },
     devtool: "source-map",
     externals: ["aws-sdk"],
-    plugins: [new CopyWebpackPlugin([{from: "langs", to: "./"}])]
+    plugins: [new CopyWebpackPlugin([{from: "eng.traineddata", to: "eng.traineddata"}])]
 };
