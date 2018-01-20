@@ -1,5 +1,7 @@
+/* eslint-env node */
+
 const slsw = require("serverless-webpack");
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
     entry: Object.assign({

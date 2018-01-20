@@ -1,10 +1,12 @@
+/* eslint-env node, es6 */
+
 var path = require("path");
 var fs = require("fs");
 var request = require("request");
 
 module.exports = () => {
     return new Promise((res, rej) => {
-        const filePath = path.join(path.dirname(__dirname), "langs", "eng.traineddata")
+        const filePath = path.join(path.dirname(__dirname), "langs", "eng.traineddata");
         console.log("Loading Trained Data...");
         fs.exists(filePath, (exists) => {
             if (exists) {

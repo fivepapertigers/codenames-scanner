@@ -193,7 +193,7 @@ describe("getSaveLink method", async () => {
             "Key": "somecoll/someid",
             "Bucket": "somebucket",
             "Expires": 120,
-            "Conditions": [["content-length-range", 0, 10485760]]
+            // "Conditions": [["content-length-range", 0, 10485760]]
         }, callback]);
     });
 

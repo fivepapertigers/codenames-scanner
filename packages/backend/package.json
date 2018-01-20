@@ -31,7 +31,11 @@
   "private": true,
   "scripts": {
     "lint": "eslint",
-    "test": "jest --config ./jest.config.js"
+    "test": "jest"
+  },
+  "jest": {
+    "browser": false,
+    "testEnvironment": "node"
   },
   "version": "0.1.0"
 }
