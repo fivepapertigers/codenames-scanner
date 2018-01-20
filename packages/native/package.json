@@ -1,0 +1,31 @@
+{
+  "dependencies": {
+    "expo": "^23.0.4",
+    "react": "16.0.0",
+    "react-native": "0.50.3",
+    "shuffle-array": "^1.0.1"
+  },
+  "devDependencies": {
+    "babel-preset-react-native": "2.1.0",
+    "jest-expo": "^24.0.0",
+    "react-native-scripts": "1.8.1",
+    "react-test-renderer": "^16.2.0",
+    "webpack": "^3.10.0"
+  },
+  "license": "MIT",
+  "main": "./native/App.js",
+  "name": "codenames-scanner-native",
+  "private": true,
+  "scripts": {
+    "android": "react-native-scripts android",
+    "eject": "react-native-scripts eject",
+    "ios": "react-native-scripts ios",
+    "lint": "eslint --config ./.eslintrc src",
+    "sls": "serverless",
+    "start": "react-native-scripts start",
+    "test": "yarn run test-backend && yarn run test-native",
+    "test-backend": "jest --config ./jest.backend.config.js",
+    "test-native": "jest --config ./jest.native.config.js"
+  },
+  "version": "0.1.0"
+}

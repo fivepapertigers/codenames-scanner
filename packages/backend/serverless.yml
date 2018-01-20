@@ -1,0 +1,46 @@
+service: codenames-scanner
+
+plugins:
+  - serverless-webpack
+
+provider:
+  name: aws
+  versionFunctions: false
+  runtime: nodejs6.10
+  region: us-east-1
+  timeout: 30
+  environment:
+    BUCKET: ${self:custom.bucketName}
+  iamRoleStatements:
+    -  Effect: "Allow"
+       Action:
+         - "s3:*"
+       Resource:
+         - arn:aws:s3:::${self:custom.bucketName}
+         - arn:aws:s3:::${self:custom.bucketName}/*
+
+
+functions:
+  authorizeImageUpload:
+    description: 'Authorizes uploading an image to S3'
+    handler: backend/handlers/authorize-upload.handler
+    events:
+      - http:
+          path: image/authorize
+          method: post
+
+  processUploadedImage:
+    description: 'Processes an uploaded image'
+    handler: backend/handlers/process-image.handler
+    events:
+      - s3:
+          bucket: ${self:custom.bucketName}
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: image-input
+
+
+custom:
+  webpack: ./webpack.config.js
+  bucketName: codenames-scanner-${opt:stage}
+  loadTrainedData: ${file(./scripts/load-trained-data.js)}
