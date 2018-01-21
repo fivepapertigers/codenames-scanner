@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Image } from "react-native";
 
 import { Board } from "./Models";
 import { sliceImageIntoCards } from "./ImageProcessor";
-import CameraExample from "./components/CameraExample";
+import BoardCapture from "./components/BoardCapture";
 import BoardOverlay from "./components/BoardOverlay";
 
 
