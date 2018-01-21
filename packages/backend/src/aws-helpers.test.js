@@ -87,9 +87,12 @@ describe("createPresignedPost method", async () => {
     }, callback]);
   });
 
-  it("returns the fields", async () => {
-    const fields = await authorizeS3Post(KEY);
-    expect(fields).toEqual(MOCK_RESPONSE);
+  it("returns the url and fields, with the key", async () => {
+    const resp = await authorizeS3Post(KEY);
+    expect(resp).toEqual({
+      url: MOCK_URL,
+      fields: Object.assign({ key: KEY }, FIELDS)
+    });
   });
 
 });
