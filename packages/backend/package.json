@@ -27,7 +27,6 @@
     "webpack": "^3.10.0"
   },
   "license": "MIT",
-  "main": "./native/App.js",
   "name": "codenames-scanner-backend",
   "private": true,
   "scripts": {

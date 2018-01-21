@@ -6,24 +6,23 @@
     "shuffle-array": "^1.0.1"
   },
   "devDependencies": {
-    "babel-preset-react-native": "2.1.0",
-    "jest-expo": "^24.0.0",
-    "react-native-scripts": "1.8.1",
-    "react-test-renderer": "^16.2.0",
-    "webpack": "^3.10.0"
+    "eslint-plugin-jest": "^21.7.0",
+    "jest-expo": "^23.0.0",
+    "react-native-scripts": "1.9.0",
+    "react-test-renderer": "^16.0.0"
   },
   "jest": {
     "preset": "jest-expo"
   },
   "license": "MIT",
-  "main": "./native/App.js",
+  "main": "./node_modules/react-native-scripts/build/bin/crna-entry.js",
   "name": "codenames-scanner-native",
   "private": true,
   "scripts": {
     "android": "react-native-scripts android",
     "eject": "react-native-scripts eject",
     "ios": "react-native-scripts ios",
-    "lint": "eslint --config ./.eslintrc src",
+    "lint": "eslint ./",
     "sls": "serverless",
     "start": "react-native-scripts start",
     "test": "jest"
