@@ -1,4 +1,7 @@
+import { install } from "source-map-support";
 import { LOG } from "../../config";
+
+install();
 
 export function asyncHandler (handler) {
     return async (event, context, callback) => {
