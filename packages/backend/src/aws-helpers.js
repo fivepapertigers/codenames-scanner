@@ -18,15 +18,17 @@ export async function authorizeS3Post(key) {
   const params = {
     Bucket: BUCKET,
     Expires: EXPIRATION,
+    Fields: {
+      key: key,
+      "Content-Encoding": "base64",
+      "Content-Type": "image/jpeg"
+    },
     Conditions: [
       ["content-length-range", 0, MAX_FILE_SIZE],
       ["eq", "$key", key]
     ]
   };
-  const result = await promisify("S3", "createPresignedPost")(params);
-  return Object.assign({}, result, {
-    fields: Object.assign({ key }, result.fields)
-  });
+  return await promisify("S3", "createPresignedPost")(params);
 }
 
 export async function loadS3File (key) {

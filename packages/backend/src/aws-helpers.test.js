@@ -80,6 +80,11 @@ describe("createPresignedPost method", async () => {
     {
       Bucket: BUCKET,
       Expires: 120,
+      Fields: {
+        key: KEY,
+        "Content-Encoding": "base64",
+        "Content-Type": "image/jpeg"
+      },
       Conditions: [
         ["content-length-range", 0, 10485760],
         ["eq", "$key", KEY]
@@ -89,10 +94,7 @@ describe("createPresignedPost method", async () => {
 
   it("returns the url and fields, with the key", async () => {
     const resp = await authorizeS3Post(KEY);
-    expect(resp).toEqual({
-      url: MOCK_URL,
-      fields: Object.assign({ key: KEY }, FIELDS)
-    });
+    expect(resp).toEqual(MOCK_RESPONSE);
   });
 
 });
