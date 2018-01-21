@@ -75,7 +75,7 @@ export const MARGIN_HEIGHT_RATIO = 16 / 162;
  * @return {number}            width of a card in pixels
  */
 export function cardWidthPixels (boardWidth) {
-    return boardWidth * CARD_WIDTH_RATIO;
+  return boardWidth * CARD_WIDTH_RATIO;
 }
 
 /**
@@ -84,7 +84,7 @@ export function cardWidthPixels (boardWidth) {
  * @return {number}             height of a card in pixels
  */
 export function cardHeightPixels (boardHeight) {
-    return boardHeight * CARD_HEIGHT_RATIO;
+  return boardHeight * CARD_HEIGHT_RATIO;
 }
 
 /**
@@ -94,7 +94,7 @@ export function cardHeightPixels (boardHeight) {
  * @return {number}             left position of card in pixels
  */
 export function cardLeftPixels (boardWidth, card) {
-    return marginWidthPixels(boardWidth) + cardWidthPixels(boardWidth) * card.column;
+  return marginWidthPixels(boardWidth) + cardWidthPixels(boardWidth) * card.column;
 }
 
 /**
@@ -103,7 +103,7 @@ export function cardLeftPixels (boardWidth, card) {
  * @return {number}             left position of card as a ratio
  */
 export function cardLeftRatio (card) {
-    return MARGIN_WIDTH_RATIO + CARD_WIDTH_RATIO * card.column;
+  return MARGIN_WIDTH_RATIO + CARD_WIDTH_RATIO * card.column;
 }
 
 /**
@@ -113,7 +113,7 @@ export function cardLeftRatio (card) {
  * @return {number}             top position of card in pixels
  */
 export function cardTopPixels (boardHeight, card) {
-    return marginHeightPixels(boardHeight) + cardHeightPixels(boardHeight) * card.row;
+  return marginHeightPixels(boardHeight) + cardHeightPixels(boardHeight) * card.row;
 }
 
 /**
@@ -122,7 +122,7 @@ export function cardTopPixels (boardHeight, card) {
  * @return {number}             top position of card as a ratio
  */
 export function cardTopRatio (card) {
-    return MARGIN_HEIGHT_RATIO + CARD_HEIGHT_RATIO * card.row;
+  return MARGIN_HEIGHT_RATIO + CARD_HEIGHT_RATIO * card.row;
 }
 
 /**
@@ -131,7 +131,7 @@ export function cardTopRatio (card) {
  * @return {number}            width of margins in pixels
  */
 export function marginWidthPixels (boardWidth) {
-    return boardWidth * MARGIN_WIDTH_RATIO;
+  return boardWidth * MARGIN_WIDTH_RATIO;
 }
 
 /**
@@ -140,5 +140,5 @@ export function marginWidthPixels (boardWidth) {
  * @return {number}             height of margins in pixels
  */
 export function marginHeightPixels (boardHeight) {
-    return boardHeight * MARGIN_HEIGHT_RATIO;
+  return boardHeight * MARGIN_HEIGHT_RATIO;
 }

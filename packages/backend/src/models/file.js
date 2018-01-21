@@ -10,35 +10,35 @@ import { loadS3File, saveS3File } from "../aws-helpers";
 
 export default class File {
 
-    static async loadFromPath (filePath) {
-        const fileName = path.basename(filePath);
-        const folder = path.dirname(filePath);
-        return this.load(folder, fileName);
-    }
+  static async loadFromPath (filePath) {
+    const fileName = path.basename(filePath);
+    const folder = path.dirname(filePath);
+    return this.load(folder, fileName);
+  }
 
-    static async load (folder, fileName) {
-        const contents = await loadS3File(formatFilePath(folder, fileName));
-        return new File(folder, fileName, contents);
-    }
+  static async load (folder, fileName) {
+    const contents = await loadS3File(formatFilePath(folder, fileName));
+    return new File(folder, fileName, contents);
+  }
 
-    constructor(folder, name = randtoken.generate(6, TOKEN_CHARACTER_SET), contents) {
-        this.folder = folder;
-        this.name = name;
-        this.contents = contents;
-    }
+  constructor(folder, name = randtoken.generate(6, TOKEN_CHARACTER_SET), contents) {
+    this.folder = folder;
+    this.name = name;
+    this.contents = contents;
+  }
 
-    async save() {
-        await saveS3File(this.fullPath(), this.contents);
-        return;
-    }
+  async save() {
+    await saveS3File(this.fullPath(), this.contents);
+    return;
+  }
 
-    fullPath() {
-        return formatFilePath(this.folder, this.name);
-    }
+  fullPath() {
+    return formatFilePath(this.folder, this.name);
+  }
 
 }
 
 
 export function formatFilePath (folder, fileName) {
-    return `${folder}/${fileName}`;
+  return `${folder}/${fileName}`;
 }
