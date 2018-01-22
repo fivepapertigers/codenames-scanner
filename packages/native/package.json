@@ -22,7 +22,6 @@
     "android": "react-native-scripts android",
     "eject": "react-native-scripts eject",
     "ios": "react-native-scripts ios",
-    "lint": "eslint ./",
     "sls": "serverless",
     "start": "react-native-scripts start",
     "test": "jest"

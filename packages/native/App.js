@@ -1,11 +1,12 @@
+/* eslint-env node, es6 */
+
 import React from "react";
-import { StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, Text, View, Image, ScrollView } from "react-native"; // eslint-disable-line no-unused-vars
 
-import { Board } from "./Models";
-import { sliceImageIntoCards } from "./ImageProcessor";
-import BoardCapture from "./components/BoardCapture";
-import BoardOverlay from "./components/BoardOverlay";
-
+import { Board, Card, CardImage } from "./Models";
+import { sliceImageIntoCards, detectTerm } from "./ImageProcessor";
+import BoardCapture from "./components/BoardCapture"; // eslint-disable-line no-unused-vars
+import BoardOverlay from "./components/BoardOverlay"; // eslint-disable-line no-unused-vars
 
 
 export default class App extends React.Component {
@@ -20,36 +21,52 @@ export default class App extends React.Component {
     this.setState({ image });
     const cardImages = await sliceImageIntoCards(image, this.state.board);
     this.setState({ cardImages });
+    cardImages.forEach(async(cardImage, idx) => {
+      const { card } = cardImage;
+      const { id, term, confidence } = await detectTerm(cardImage.image);
+      const newCard = new Card(card.row, card.column, term, card.type, id, confidence);
+      const newCardImage = Object.assign(new CardImage(newCard, cardImage.image));
+      this.setState({
+        cardImages: this.state.cardImages
+          .map((ci, ix) => ix === idx ? newCardImage : ci)
+      });
+    });
   }
 
   render() {
     if (this.state.image) {
       return (
-        <View>
+        <ScrollView>
           <Image source={this.state.image} style={{width: 400, height: 300}}/>
           {this.renderCardImages()}
-        </View>
+        </ScrollView>
       );
     } else {
       return (
-        <CameraExample imageCaptured={this.imageCaptured.bind(this)}>
+        <BoardCapture imageCaptured={this.imageCaptured.bind(this)}>
           <BoardOverlay board={this.state.board} />
-        </CameraExample>
+        </BoardCapture>
       );
     }
   }
 
   renderCardImages() {
-    return this.state.cardImages.map((cardImage) => {
-      const {card, image} = cardImage;
-      return (
+    const board = [[], [], [], [], []];
+    this.state.cardImages.forEach((cardImage) => {
+      const { card } = cardImage;
+      board[card.row][card.column] = (
         <View
           key={`${card.row}${card.column}`}
+          style={{flex: .2, margin: "1%", height: 80, backgroundColor: card.color(), justifyContent: "center"}}
         >
-          <Text>Row: {`${card.row}`} / Column: {`${card.column}`}</Text>
-          <Image source={image} style={{width: 210, height: 130}}></Image>
+          <Text style={{flex: 1, color: "white"}}>{card.term} / {card.confidence}</Text>
         </View>
       );
     });
+    return board.map((cards, idx) =>
+      <View key={idx} style={{flex: 1, flexDirection: "row"}}>
+        {cards}
+      </View>
+    );
   }
 }

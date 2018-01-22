@@ -1,12 +1,12 @@
-import React from 'react';
-import { Text, View, TouchableOpacity, Dimensions } from 'react-native';
-import { Camera, Permissions, ScreenOrientation } from 'expo';
+import React from "react";
+import { Text, View, TouchableOpacity, Dimensions } from "react-native"; // eslint-disable-line no-unused-vars
+import { Camera, Permissions, ScreenOrientation } from "expo"; // eslint-disable-line no-unused-vars
 
 const AspectRatios = {
   WIDE: 16.0 / 9,
   NORMAL: 4.0 / 3,
   SQUARE: 1
-}
+};
 
 export default class BoardCapture extends React.Component {
   state = {
@@ -18,7 +18,7 @@ export default class BoardCapture extends React.Component {
 
   async componentWillMount() {
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
-    this.setState({ hasCameraPermission: status === 'granted' });
+    this.setState({ hasCameraPermission: status === "granted" });
     ScreenOrientation.allow(ScreenOrientation.Orientation.LANDSCAPE_LEFT);
   }
 
@@ -50,9 +50,9 @@ export default class BoardCapture extends React.Component {
         <View
           style={{
             flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            'backgroundColor': 'black'
+            justifyContent: "center",
+            alignItems: "center",
+            "backgroundColor": "black"
           }}>
           <Camera
             style={{
@@ -60,13 +60,15 @@ export default class BoardCapture extends React.Component {
             }}
             type={this.state.type}
             ref={ref => { this.camera = ref; }}
-            ratio='4:3'
+            ratio="4:3"
           >
             <View
               style={{
                 flex: 1,
-                backgroundColor: 'transparent',
-                flexDirection: 'row',
+                backgroundColor: "transparent",
+                flexDirection: "row",
+                width: "100%",
+                height: "100%"
               }}>
               {this.props.children}
               <TouchableOpacity
@@ -76,13 +78,13 @@ export default class BoardCapture extends React.Component {
               <TouchableOpacity
                 style={{
                   flex: 0.1,
-                  alignSelf: 'flex-end',
-                  alignItems: 'center',
+                  alignSelf: "flex-end",
+                  alignItems: "center",
                 }}
                 onPress={this.changeCameras.bind(this)}>
                 <Text
-                  style={{ fontSize: 18, marginBottom: 10, color: 'white' }}>
-                  {' '}Flip{' '}
+                  style={{ fontSize: 18, marginBottom: 10, color: "white" }}>
+                  {" "}Flip{" "}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -94,9 +96,9 @@ export default class BoardCapture extends React.Component {
 }
 
 function cameraDimensions (ratio) {
-  const { width, height } = Dimensions.get('window');
+  const { width, height } = Dimensions.get("window");
   if (width / height > ratio) {
-    return { height, width: height * ratio }
+    return { height, width: height * ratio };
   }
-  return { width, height: width / ratio }
+  return { width, height: width / ratio };
 }

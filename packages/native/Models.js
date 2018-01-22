@@ -20,16 +20,18 @@ export const CardQuantities = {
 export const CardColors = {
   [CardTypes.Blue]: "blue",
   [CardTypes.Red]: "red",
-  [CardTypes.Bystander]: "lightgrey",
+  [CardTypes.Bystander]: "grey",
   [CardTypes.Assassin]: "black"
 };
 
 export class Card {
-    constructor (row, column, word = null, type = null) {
+    constructor (row, column, term = null, type = null, id = null, confidence = null) {
+        this.id = id;
         this.row = row;
         this.column = column;
-        this.word = word;
+        this.term = term;
         this.type = type;
+        this.confidence = confidence;
         this.exposed = false;
     }
 

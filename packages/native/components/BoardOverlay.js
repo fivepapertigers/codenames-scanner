@@ -1,26 +1,19 @@
-import React from 'react';
-import { Text, View, TouchableOpacity, Dimensions } from 'react-native';
-import * as BoardDimensions from '../BoardDimensions';
-
-const AspectRatios = {
-  WIDE: 16.0 / 9,
-  NORMAL: 4.0 / 3,
-  SQUARE: 1
-}
-
-const colors = ['red', 'blue', 'green', 'yellow', 'purple'];
+import React from "react";
+import { Text, View, TouchableOpacity, Dimensions } from "react-native"; // eslint-disable-line no-unused-vars
+import * as BoardDimensions from "../BoardDimensions"; // eslint-disable-line no-unused-vars
 
 export default class BoardOverlay extends React.Component {
 
   renderBoard() {
     return this.props.board.cards.map((card) => {
       let style = {
-          position: 'absolute',
+          position: "absolute",
           top: ratioToPerc(BoardDimensions.cardTopRatio(card)),
           left: ratioToPerc(BoardDimensions.cardLeftRatio(card)),
           width: ratioToPerc(BoardDimensions.CARD_WIDTH_RATIO),
           height: ratioToPerc(BoardDimensions.CARD_HEIGHT_RATIO),
-          padding: 1
+          borderWidth: 2,
+          borderColor: "black"
         };
       return (
         <View
@@ -29,9 +22,10 @@ export default class BoardOverlay extends React.Component {
         >
           <View
             style={{
-              backgroundColor: card.color(),
-              width: '100%',
-              height: '100%'
+              backgroundColor: "lightgrey",
+              width: "100%",
+              height: "100%",
+              opacity: .2
             }} />
         </View>
       );
@@ -41,14 +35,13 @@ export default class BoardOverlay extends React.Component {
   render() {
     return (
       <View style={{
-        position: 'absolute',
-        width: '100%',
-        height: '100%',
-        opacity: .2
+        position: "absolute",
+        width: "100%",
+        height: "100%"
       }}>
         {this.renderBoard()}
       </View>
-    )
+    );
   }
 }
 
