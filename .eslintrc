@@ -57,5 +57,12 @@
     "strict": [2, "function"],
     "yoda": [2, "never"]
   },
-  "plugins": ["jest"]
+  "plugins": ["jest", "react", "react-native"],
+  "settings": {
+    "jsx": true,
+    "node": true
+  },
+  "env": {
+    "browser": true
+  }
 }
