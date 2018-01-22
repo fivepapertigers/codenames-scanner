@@ -11,7 +11,9 @@ const FILE_TERM_MAP = [
   ["cotton.jpg", "COTTON"],
   ["undertaker.jpg", "UNDERTAKER"],
   ["lochness.jpg", "LOCH NESS"],
-  ["vacuum.jpg", "VACUUM"]
+  ["vacuum.jpg", "VACUUM"],
+  ["maple.jpg", "MAPLE"],
+  ["splitletters.jpg", "CHAIR"]
 ];
 
 describe("processImage function", async () => {
@@ -20,9 +22,10 @@ describe("processImage function", async () => {
     for (const [filename, term] of FILE_TERM_MAP) {
       const img = fs.readFileSync(path.join(__dirname, "assets", filename));
       const result = await findTermFromImage(img);
-      expect(result).toBe(term);
+      expect(result.term).toBe(term);
+      expect(result.confidence > .9).toBe(true);
     }
-  }, 30000);
+  }, 50000);
 
 });
 

@@ -4,14 +4,20 @@ export default class TermResult {
 
   static collection = "term-results";
 
-  constructor(id, term) {
+  constructor(id, term, confidence) {
     this.id = id;
     this.term = term;
+    this.confidence = confidence;
   }
 
   async save() {
-    const { id, term } = this;
-    await DataStore.save(TermResult.collection, this.id, { id, term });
+    const { id, term, confidence } = this;
+    await DataStore.save(TermResult.collection, this.id, { id, term, confidence });
     return;
   }
+
+  location() {
+    return `${TermResult.collection}/${this.id}`;
+  }
+
 }

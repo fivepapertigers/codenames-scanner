@@ -13,10 +13,12 @@ jest.mock("../aws-helpers");
 
 const RETRIEVE_DATA = "http://retrieval";
 const SAVE_DATA = {"some": "field"};
-const FILE_PATH = "somecoll/someid";
+const UPLOAD_FILE_PATH = "somecoll/someid";
+const TERM_RESULT_FILE_PATH = "term-results/someid";
 
 File.mockImplementation(() => ({
-  fullPath: () => FILE_PATH,
+  fullPath: () => UPLOAD_FILE_PATH,
+  name: "someid"
 }));
 
 describe("handler function", async () => {
@@ -47,9 +49,9 @@ describe("handler function", async () => {
   it("authorizes via s3", async () => {
     await handler();
     expect(authorizeS3Retrieval.mock.calls).toHaveLength(1);
-    expect(authorizeS3Retrieval.mock.calls[0]).toEqual([FILE_PATH]);
+    expect(authorizeS3Retrieval.mock.calls[0]).toEqual([TERM_RESULT_FILE_PATH]);
     expect(authorizeS3Post.mock.calls).toHaveLength(1);
-    expect(authorizeS3Post.mock.calls[0]).toEqual([FILE_PATH]);
+    expect(authorizeS3Post.mock.calls[0]).toEqual([UPLOAD_FILE_PATH]);
   });
 
 });

@@ -2,6 +2,12 @@
 
 import path from "path";
 import Tesseract from "tesseract.js";
+import GM from "gm";
+import jaroWinkler from "jaro-winkler";
+
+
+
+const gm = GM.subClass({imageMagick: true});
 
 const CODENAMES_LIBRARY = [
   "AFRICA", "AGENT", "AIR", "ALIEN", "ALPS", "AMAZON", "AMBULANCE",
@@ -62,8 +68,7 @@ const ONLY_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 const LIBRARY_MATCH_WEIGHT = 20;
 const SINGLE_WORD_WEIGHT = 5;
-const CHARACTER_LENGTH_WEIGHT = 7;
-const TERM_LENGTH_RANGE = [3, 11];
+const LIBRARY_DISTANCE_WEIGHT = 8;
 
 const TESSERACT_DIR = path.join(
   process.cwd(),
@@ -71,76 +76,138 @@ const TESSERACT_DIR = path.join(
 );
 
 
+export async function base64ToJpeg (b64Stream) {
+  // ensure buffer interpreted as base64
+  const jpegStream = new Buffer(b64Stream.toString(), "base64");
+  return await fixCorruptedJpeg(jpegStream);
+}
+
 
 export async function findTermFromImage (imageBuffer) {
-  const opts = process.env.NODE_ENV === "test"
+  const preprocessedImage = await preprocessImage(imageBuffer);
+  const resultData = await runDetection(preprocessedImage);
+  return findTermFromResult(resultData);
+}
+
+
+async function fixCorruptedJpeg(jpegStream) {
+  return new Promise((res, rej) => {
+    gm(jpegStream)
+      .toBuffer((err, buffer) => {
+        if (err) {
+          return rej(err);
+        }
+        return res(buffer);
+      });
+  });
+}
+
+async function preprocessImage(inStream) {
+  return new Promise((res, rej) => {
+    gm(inStream)
+      .gaussian(2)
+      .contrast()
+      .toBuffer((err, outStream) => {
+        if (err) {
+          return rej(err);
+        }
+        return res(outStream);
+      });
+  });
+}
+
+
+async function runDetection(imageBuffer) {
+  return new Promise((res, rej) => {
+    const opts = process.env.NODE_ENV === "test"
     ? {}
     : {
       workerPath: path.join(TESSERACT_DIR, "src", "node", "worker.js"),
       langPath: path.join(TESSERACT_DIR, "lang/"),
       corePath: path.join(TESSERACT_DIR, "src", "index.js")
     };
-  const tess = Tesseract.create(opts);
-  const resultData = await tess.recognize(imageBuffer, {
-    lang: "eng",
-    tessedit_char_whitelist: ONLY_CHARACTERS // eslint-disable-line camelcase
+    const tess = Tesseract.create(opts);
+    tess.recognize(imageBuffer, {
+      lang: "eng",
+      tessedit_char_whitelist: ONLY_CHARACTERS // eslint-disable-line camelcase
+    })
+    .then(res)
+    .catch((err) => {
+      rej(err);
+    });
   });
-
-  return findTermFromResult(resultData);
 }
 
 function findTermFromResult(resultData) {
-  return validTermsFromResult(resultData)
-    .reduce(([bestTerm, bestTermWeight], term) => {
-      const termWeight = weighTerm(term);
+  const term = validTermsFromResult(resultData)
+    .reduce(([bestTerm, bestTermWeight], next) => {
+      const termWeight = weighTerm(next);
       if (termWeight > bestTermWeight) {
-        return [term, termWeight];
+        return [next, termWeight];
       } else {
         return [bestTerm, bestTermWeight];
       }
     }, [null, -1])[0];
+  if (isInLibrary(term)) {
+    return { term, confidence: 1 };
+  }
+  const { libTerm, distance } = libraryBestMatch(term);
+  return { term: libTerm, confidence: distance };
 }
 
 function validTermsFromResult(resultData) {
   return resultData.lines.map(line => line.words.map(word => word.text))
     .map(breakLineIntoTerms)
-    .reduce((terms, termSet) => terms.concat(termSet), []);
+    .reduce((terms, termSet) => terms.concat(termSet), [])
+    .filter(isValidTerm);
 }
 
 function weighTerm (term) {
-  const weighers = [weighWordLength, weighLibraryMatch, weighSingleWord];
+  const weighers = [weighLibraryMatch, weighLibraryDistance, weighSingleWord];
   return weighers.reduce((total, func) => total + func(term), 0);
 }
 
 function breakLineIntoTerms(lineWords) {
-  return lineWords.reduce(
-    ([wordSets, lastWord], word) => {
-      // only include valid words
-      if (isValidWord(word)) {
-        return [wordSets.concat(
-          lastWord ? [`${lastWord} ${word}`, word] : word
-        ), word];
-      }
-      return [wordSets, null];
-    },
-    [[], null]
-  )[0];
+  return lineWords.reduce((collA, lineWordA, idxa) =>
+    collA.concat(
+      lineWordA,
+      ... lineWords.slice(idxa + 1)
+        .reduce(([collB, collC], lineWordB, idxb) =>
+          [
+            collB.concat(`${collB[idxb - 1] || lineWordA}${lineWordB}`),
+            collC.concat(`${collB[idxb - 1] || lineWordA} ${lineWordB}`)
+          ],
+          [[], []])
+    ),
+    []
+  );
 }
 
-
-function isValidWord(word) {
-  return word.length > 2 && word.match(/^[A-Z]{2,}$/);
+function isValidTerm(word) {
+  return word.length > 2 && word.match(/^[A-Z]{2,}(\s[A-Z]{2,})?$/);
 }
 
 function weighLibraryMatch(term) {
-  return CODENAMES_LIBRARY.indexOf(term) > -1 ? LIBRARY_MATCH_WEIGHT : 0;
+  return isInLibrary(term) ? LIBRARY_MATCH_WEIGHT : 0;
+}
+
+function weighLibraryDistance(term) {
+  return libraryBestMatch(term).distance * LIBRARY_DISTANCE_WEIGHT;
 }
 
 function weighSingleWord(term) {
   return term.match(/\s/) ? 0 : SINGLE_WORD_WEIGHT;
 }
 
-function weighWordLength(term) {
-  const [min, max] = TERM_LENGTH_RANGE;
-  return term.length >= min && term.length <= max ? CHARACTER_LENGTH_WEIGHT : 0;
+function isInLibrary(term) {
+  return CODENAMES_LIBRARY.indexOf(term) > -1;
+}
+
+function libraryBestMatch(term) {
+  return CODENAMES_LIBRARY
+    .map(libTerm => ({ libTerm, distance: jaroWinkler(libTerm, term) }))
+    .reduce(
+      (high, next) => high.distance > next.distance ? high : next,
+      { distance: 0 }
+    );
 }
