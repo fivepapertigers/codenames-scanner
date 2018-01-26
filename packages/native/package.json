@@ -3,6 +3,8 @@
     "expo": "^23.0.4",
     "react": "16.0.0",
     "react-native": "0.50.3",
+    "react-redux": "^5.0.6",
+    "redux": "^3.7.2",
     "shuffle-array": "^1.0.1"
   },
   "devDependencies": {
@@ -24,7 +26,7 @@
     "ios": "react-native-scripts ios",
     "sls": "serverless",
     "start": "react-native-scripts start",
-    "test": "jest"
+    "test": "npx jest"
   },
   "version": "0.1.0"
 }

@@ -2,11 +2,16 @@ const shuffle = require("shuffle-array");
 
 
 export const CardTypes = {
-  Blue: "blue",
-  Red: "red",
+  Team: "team",
   Bystander: "bystander",
   Assassin: "assassin",
   Wild: "wild"
+};
+
+export const Teams = {
+  Blue: "blue",
+  Red: "red",
+  None: "none"
 };
 
 export const CardQuantities = {
