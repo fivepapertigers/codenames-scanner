@@ -81,7 +81,7 @@ export function processBoardImage(boardImage) {
     const { board } = getState();
 
     // Process each card in the board in parallel, then resolve
-    return Promise.all(flattenBoard(async (card, row, col) => {
+    return Promise.all(flattenBoard(async ({card, row, col}) => {
       // Slice card image from board and dispatch
       const cardImage = await slicer(row, col);
       dispatch(addImageToCard(row, col, cardImage));

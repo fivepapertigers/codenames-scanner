@@ -20,7 +20,7 @@ test("flattens board", () => {
 });
 
 test("flattens board with processing", () => {
-  const res = flattenBoard((card, row, col) => Object.assign({}, card, {sum: row + col}))([
+  const res = flattenBoard(({card, row, col}) => Object.assign({}, card, {sum: row + col}))([
     [{}, {}, {}, {}, {}],
     [{}, {}, {}, {}, {}],
     [{}, {}, {}, {}, {}],

@@ -91,8 +91,8 @@ describe("process board image", () => {
 
   test("adds image to each card", async () => {
     await Actions.processBoardImage(boardImage)(dispatch, getState);
-    flattenBoard((card, row, col, index) => {
-      expect(dispatch.mock.calls[index + 1]).toEqual([{
+    flattenBoard(({card, row, col, idx}) => {
+      expect(dispatch.mock.calls[idx + 1]).toEqual([{
         type: "ADD_IMAGE_TO_CARD",
         row: row,
         col: col,
@@ -103,8 +103,8 @@ describe("process board image", () => {
 
   test("adds term result to each card", async () => {
     await Actions.processBoardImage(boardImage)(dispatch, getState);
-    flattenBoard((card, row, col, index) => {
-      expect(dispatch.mock.calls[index + 26]).toEqual([{
+    flattenBoard(({card, row, col, idx}) => {
+      expect(dispatch.mock.calls[idx + 26]).toEqual([{
         type: "ADD_TERM_TO_CARD",
         row: row,
         col: col,

@@ -12,7 +12,7 @@ const BoardOverlay = () => (
     width: "100%",
     height: "100%"
   }}>
-    {flattenBoard((cards, row, col, idx) => {
+    {flattenBoard(({cards, row, col, idx}) => {
       const card = { row, col };
       return (
         <View

@@ -4,19 +4,18 @@
 
 /**
  * Flattens the board into a list of cards
- * @param  {(card: Card, row: number, col: number) => Card} processFunc a function to process each flattened card
- * @return {(board: Card[][]) => Card[]}                    a list of cards
  */
-export const flattenBoard = processFunc => board =>
-  board.reduce((flat, cards, row) =>
-    flat.concat(...
-      (processFunc !== undefined
-        ? cards.map((card, col) => processFunc(card, row, col, getCardNumber(row, col)))
-        : cards
-      )
-    ),
-    []
-  ).filter(card => card);
+export const flattenBoard = (processFunc, filterFunc, sortFunc) => board =>
+  board
+    .reduce((flat, cards, row) =>
+      flat.concat(
+        cards.map((card, col) => ({card, row, col, idx: getCardNumber(row, col)}))
+      ),
+      []
+    )
+    .filter(filterFunc ? filterFunc : ({card}) => card)
+    .sort(sortFunc ? sortFunc : () => 0)
+    .map(processFunc ? processFunc : ({card}) => card);
 
 /**
  * Generates an empty board
@@ -38,7 +37,7 @@ export function generateEmptyBoard() {
  * Checks if the board is still processing
  */
 export const boardIsProcessing = board =>
-  flattenBoard(card => Boolean(card && card.termResult))(board).length > 0;
+  flattenBoard(({card}) => Boolean(card && card.termResult))(board).length > 0;
 
 /**
  * Gets the card number given board coordinates
@@ -50,8 +49,12 @@ export const getCardNumber = (row, col) => row * 5 + col;
 
 
 export const getProcessedCards = board =>
-  flattenBoard(card => card.termResult)(board).filter(tr => tr);
+  flattenBoard(({card}) => card.termResult)(board).filter(tr => tr);
 
 
 export const getCardTerm = card =>
   card && card.termResult && card.termResult.term;
+
+
+export const coveredCardSorter = (cardDataA, cardDataB) =>
+  Number(Boolean(cardDataA.card.covered)) - Number(Boolean(cardDataB.card.covered));
