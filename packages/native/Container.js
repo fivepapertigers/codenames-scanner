@@ -1,72 +1,91 @@
 /* eslint-env node, es6 */
+import React from "react"; // eslint-disable-line no-unused-vars
+import { Text, View, ActivityIndicator, ScrollView, TouchableHighlight } from "react-native"; // eslint-disable-line no-unused-vars
+import { connect } from "react-redux";
+import { processBoardImage } from "./Actions";
+import { getProcessedCards } from "./BoardUtils";
 
-import React from "react";
-import { StyleSheet, Text, View, Image, ScrollView } from "react-native"; // eslint-disable-line no-unused-vars
-
-import { Board, Card, CardImage } from "./Models";
-import { sliceImageIntoCards, detectTerm } from "./ImageProcessor";
 import BoardCapture from "./components/BoardCapture"; // eslint-disable-line no-unused-vars
 import BoardOverlay from "./components/BoardOverlay"; // eslint-disable-line no-unused-vars
+import ActionBar from "./components/ActionBar"; // eslint-disable-line no-unused-vars
+import GridCard from "./components/GridCard"; // eslint-disable-line no-unused-vars
 
-
-export default class Container extends React.Component {
-
-  state = {
-    board: new Board(),
-    cardImages: [],
-    image: null
-  }
-
-  async imageCaptured(image) {
-    this.setState({ image });
-    const cardImages = await sliceImageIntoCards(image, this.state.board);
-    this.setState({ cardImages });
-    cardImages.forEach(async(cardImage, idx) => {
-      const { card } = cardImage;
-      const { id, term, confidence } = await detectTerm(cardImage.image);
-      const newCard = new Card(card.row, card.column, term, card.type, id, confidence);
-      const newCardImage = Object.assign(new CardImage(newCard, cardImage.image));
-      this.setState({
-        cardImages: this.state.cardImages
-          .map((ci, ix) => ix === idx ? newCardImage : ci)
-      });
-    });
-  }
-
-  render() {
-    if (this.state.image) {
+const Container = ({ boardImage, board, imageCaptured, totalProcessed }) => {
+  if (boardImage) {
+    if (totalProcessed.length < 25) {
       return (
-        <ScrollView>
-          <Image source={this.state.image} style={{width: 400, height: 300}}/>
-          {this.renderCardImages()}
-        </ScrollView>
-      );
-    } else {
-      return (
-        <BoardCapture imageCaptured={this.imageCaptured.bind(this)}>
-          <BoardOverlay board={this.state.board} />
-        </BoardCapture>
-      );
-    }
-  }
-
-  renderCardImages() {
-    const board = [[], [], [], [], []];
-    this.state.cardImages.forEach((cardImage) => {
-      const { card } = cardImage;
-      board[card.row][card.column] = (
-        <View
-          key={`${card.row}${card.column}`}
-          style={{flex: .2, margin: "1%", height: 80, backgroundColor: card.color(), justifyContent: "center"}}
-        >
-          <Text style={{flex: 1, color: "white"}}>{card.term} / {card.confidence}</Text>
+        <View>
+          <ActivityIndicator size="large" />
+          <Text>Detecting terms: {totalProcessed.length} of 25</Text>
         </View>
       );
-    });
-    return board.map((cards, idx) =>
-      <View key={idx} style={{flex: 1, flexDirection: "row"}}>
-        {cards}
+    }
+    return (
+      <View
+        style={{
+          flex: 1,
+          flexDirection: "column"
+        }}
+      >
+        <View
+          style={{
+            flex: 8
+          }}
+        >
+          <ScrollView>
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "column",
+                justifyContent: "space-around",
+                alignItems: "center",
+                minWidth: 600,
+                minHeight: 300
+              }}
+            >
+            {board.map((cards, row) => (
+              <View
+                key={row}
+                style={{
+                  flex: 1,
+                  justifyContent: "space-around",
+                  alignItems: "center",
+                  flexDirection: "row",
+                  width: "100%"
+                }}>
+                {cards.map((card, col) => (
+                  <GridCard
+                    key={`${row}-${col}`}
+                    card={card}
+                  />
+                ))}
+              </View>
+            ))}
+            </View>
+          </ScrollView>
+        </View>
+        <ActionBar/>
       </View>
     );
+  } else if (board) {
+    return (
+      <BoardCapture imageCaptured={imageCaptured}>
+        <BoardOverlay board={board} />
+      </BoardCapture>
+    );
+  } else {
+    return (<Text>Loading...</Text>);
   }
-}
+};
+
+const mapStateToProps = ({ boardImage, board }) => ({
+  boardImage, board,
+  totalProcessed: getProcessedCards(board)
+});
+
+const mapDispatchToProps = dispatch => ({
+  imageCaptured: image => dispatch(processBoardImage(image)),
+});
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(Container);

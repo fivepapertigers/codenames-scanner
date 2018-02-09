@@ -1,5 +1,6 @@
 import * as Actions from "./Actions";
-import { Teams, CardTypes } from "./Models";
+import { CardTypes } from "./Models";
+import { generateEmptyBoard } from "./BoardUtils";
 
 import shuffle from "shuffle-array";
 
@@ -9,32 +10,19 @@ export function appReducer(currentState, action) {
 }
 
 
-export function generateEmptyBoard() {
-  const board = [];
-  for (let i = 0; i < 5; i++ ){
-    const row = [];
-    for (let j = 0; j < 5; j++ ){
-      row.push({});
-    }
-    board.push(row);
-  }
-  return board;
-}
-
-
 function reduceState(action) {
   switch (action.type) {
-    case Actions.GENERATE_BOARD: {
+    case Actions.CLEAR_BOARD: {
       return () => ({ board: generateEmptyBoard() });
     }
     case Actions.ADD_TERM_TO_CARD:{
-      const { term, row, col } = action;
-      return modifyCardAttrs({ term })(row, col);
+      const { termResult, row, col } = action;
+      return modifyCardAttrs({ termResult })(row, col);
     }
     case Actions.TOGGLE_CARD_COVERED:{
       const { row, col } = action;
       return updateCard(
-        currentCard => ({covered: !currentCard.covered})
+        currentCard => Object.assign({}, currentCard, {covered: !currentCard.covered})
       )(row, col);
     }
     case Actions.ADD_IMAGE_TO_CARD:{
@@ -42,14 +30,14 @@ function reduceState(action) {
       return modifyCardAttrs({ image })(row, col);
     }
     case Actions.ADD_BOARD_IMAGE:{
-      const { image } = action;
-      return () => ({ image });
+      const { boardImage } = action;
+      return () => ({ boardImage });
     }
     case Actions.DESIGNATE_REMAINING_CARDS:{
       return designateRemainingCards;
     }
   }
-  return () => {};
+  return () => ({});
 }
 
 
@@ -77,14 +65,10 @@ function updateCard(updateFunc) {
 
 
 function designateRemainingCards(currentState) {
-  const teamCounts = {
-    [Teams.Red]: 8,
-    [Teams.Blue]: 8
-  };
 
   const typeCounts = {
-    [CardTypes.Team]: 16,
-    [CardTypes.Wild]: 1,
+    [CardTypes.Blue]: 8,
+    [CardTypes.Red]: 8,
     [CardTypes.Bystander]: 7,
     [CardTypes.Assassin]: 1
   };
@@ -94,16 +78,13 @@ function designateRemainingCards(currentState) {
       if (card.type) {
         typeCounts[card.type]--;
       }
-      if (card.type !== CardTypes.Wild && card.team) {
-        teamCounts[card.team]--;
-      }
     }));
 
-  const teamStack = shuffle([].concat(
-    ...Object.keys(teamCounts).map(
-      team => iterate(() => team)(teamCounts[team])
-    )
-  ));
+  // if neither blue nor red has the wild, randomly assign to one or the other
+  if (typeCounts[CardTypes.Blue] > -1 && typeCounts[CardTypes.Red] > -1) {
+    const wild = shuffle([CardTypes.Red, CardTypes.Blue])[0];
+    typeCounts[wild]++;
+  }
 
   const typeStack = shuffle([].concat(
     ...Object.keys(typeCounts).map(
@@ -118,19 +99,7 @@ function designateRemainingCards(currentState) {
           return card;
         }
         const type = typeStack.pop();
-        let team;
-        switch (type) {
-          case CardTypes.Team:
-            team = teamStack.pop();
-            break;
-          case CardTypes.Wild:
-            team = shuffle([Teams.Red, Teams.Blue])[0];
-            break;
-          default:
-            team = Teams.None;
-            break;
-        }
-        return Object.assign({}, card, { type, team });
+        return Object.assign({}, card, { type });
       }))
     };
 }

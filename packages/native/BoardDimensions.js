@@ -94,7 +94,7 @@ export function cardHeightPixels (boardHeight) {
  * @return {number}             left position of card in pixels
  */
 export function cardLeftPixels (boardWidth, card) {
-  return marginWidthPixels(boardWidth) + cardWidthPixels(boardWidth) * card.column;
+  return marginWidthPixels(boardWidth) + cardWidthPixels(boardWidth) * card.col;
 }
 
 /**
@@ -103,7 +103,7 @@ export function cardLeftPixels (boardWidth, card) {
  * @return {number}             left position of card as a ratio
  */
 export function cardLeftRatio (card) {
-  return MARGIN_WIDTH_RATIO + CARD_WIDTH_RATIO * card.column;
+  return MARGIN_WIDTH_RATIO + CARD_WIDTH_RATIO * card.col;
 }
 
 /**

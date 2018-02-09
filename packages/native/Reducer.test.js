@@ -1,7 +1,8 @@
 import { appReducer, generateEmptyBoard } from "./Reducer";
+import { flattenBoard } from "./BoardUtils";
 
-test("GENERATE_BOARD", () => {
-  expect(appReducer({}, {type: "GENERATE_BOARD"})).toEqual({
+test("CLEAR_BOARD", () => {
+  expect(appReducer({}, {type: "CLEAR_BOARD"})).toEqual({
     board: [
       [{}, {}, {}, {}, {}],
       [{}, {}, {}, {}, {}],
@@ -15,11 +16,11 @@ test("GENERATE_BOARD", () => {
 
 test("ADD_TERM_TO_CARD", () => {
   expect(appReducer({board: generateEmptyBoard()}, {
-    row: 1, col: 3, type: "ADD_TERM_TO_CARD", term: "WORD"
+    row: 1, col: 3, type: "ADD_TERM_TO_CARD", termResult: "termresult"
   })).toEqual({
     board: [
       [{}, {}, {}, {}, {}],
-      [{}, {}, {}, {term: "WORD"}, {}],
+      [{}, {}, {}, {termResult: "termresult"}, {}],
       [{}, {}, {}, {}, {}],
       [{}, {}, {}, {}, {}],
       [{}, {}, {}, {}, {}]
@@ -69,8 +70,8 @@ test("DESIGNATE_REMAINING_CARDS with empty board", () => {
 
 test("DESIGNATE_REMAINING_CARDS with some cards", () => {
   const board = generateEmptyBoard();
-  board[1][4] = {team: "red", type: "wild"};
-  board[3][2] = {team: "none", type: "assassin"};
+  board[1][4] = {type: "red"};
+  board[3][2] = {type: "assassin"};
   runBoardAssertions(appReducer(
     { board }, {type: "DESIGNATE_REMAINING_CARDS"}
   ).board);
@@ -78,30 +79,20 @@ test("DESIGNATE_REMAINING_CARDS with some cards", () => {
 
 
 test("ADD_BOARD_IMAGE", () => {
-  expect(appReducer({}, {type: "ADD_BOARD_IMAGE", image: {uri: "someuri"}}))
-    .toEqual({image: {uri: "someuri"}});
+  expect(appReducer({}, {type: "ADD_BOARD_IMAGE", boardImage: {uri: "someuri"}}))
+    .toEqual({boardImage: {uri: "someuri"}});
 });
 
 
-function flattenBoard(board) {
-  return board.reduce((flat, row) => {
-    return flat.concat(...row);
-  }, []);
-}
-
-
 function runBoardAssertions(board) {
-  const cards = flattenBoard(board);
-  const redCards = cards.filter(c => c.team === "red").length;
-  const blueCards = cards.filter(c => c.team === "blue").length;
+  const cards = flattenBoard()(board);
+  const redCards = cards.filter(c => c.type === "red").length;
+  const blueCards = cards.filter(c => c.type === "blue").length;
   expect(redCards >= 8).toBe(true);
   expect(redCards <= 9).toBe(true);
   expect(blueCards >= 8).toBe(true);
   expect(blueCards <= 9).toBe(true);
   expect(redCards !== blueCards).toBe(true);
-  expect(cards.filter(c => c.team === "none")).toHaveLength(8);
-  expect(cards.filter(c => c.type === "team")).toHaveLength(16);
-  expect(cards.filter(c => c.type === "wild")).toHaveLength(1);
   expect(cards.filter(c => c.type === "assassin")).toHaveLength(1);
   expect(cards.filter(c => c.type === "bystander")).toHaveLength(7);
 }

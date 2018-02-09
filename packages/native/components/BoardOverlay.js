@@ -1,24 +1,32 @@
 import React from "react";
-import { Text, View, TouchableOpacity, Dimensions } from "react-native"; // eslint-disable-line no-unused-vars
-import * as BoardDimensions from "../BoardDimensions"; // eslint-disable-line no-unused-vars
+import { View } from "react-native";
 
-export default class BoardOverlay extends React.Component {
+import { generateEmptyBoard, flattenBoard } from "../BoardUtils";
+import * as BoardDimensions from "../BoardDimensions";
 
-  renderBoard() {
-    return this.props.board.cards.map((card) => {
-      let style = {
-          position: "absolute",
-          top: ratioToPerc(BoardDimensions.cardTopRatio(card)),
-          left: ratioToPerc(BoardDimensions.cardLeftRatio(card)),
-          width: ratioToPerc(BoardDimensions.CARD_WIDTH_RATIO),
-          height: ratioToPerc(BoardDimensions.CARD_HEIGHT_RATIO),
-          borderWidth: 2,
-          borderColor: "black"
-        };
+const BOARD = generateEmptyBoard();
+
+const BoardOverlay = () => (
+  <View style={{
+    position: "absolute",
+    width: "100%",
+    height: "100%"
+  }}>
+    {flattenBoard((cards, row, col, idx) => {
+      const card = { row, col };
       return (
         <View
-          key={`${card.row}${card.column}`}
-          style={style}
+          key={idx}
+          style={{
+            position: "absolute",
+            top: ratioToPerc(BoardDimensions.cardTopRatio(card)),
+            left: ratioToPerc(BoardDimensions.cardLeftRatio(card)),
+            width: ratioToPerc(BoardDimensions.CARD_WIDTH_RATIO),
+            height: ratioToPerc(BoardDimensions.CARD_HEIGHT_RATIO),
+            borderWidth: 2,
+            borderColor: "black",
+            backgroundColor: (idx % 2 === 0) ? "rgba(120, 120, 120, 0.5)" : "rgba(30, 30, 30, 0.5)"
+          }}
         >
           <View
             style={{
@@ -29,21 +37,10 @@ export default class BoardOverlay extends React.Component {
             }} />
         </View>
       );
-    });
+    })(BOARD)
   }
-
-  render() {
-    return (
-      <View style={{
-        position: "absolute",
-        width: "100%",
-        height: "100%"
-      }}>
-        {this.renderBoard()}
-      </View>
-    );
-  }
-}
+  </View>
+);
 
 function ratioToPerc(ratio) {
   return `${roundTwoDecimals(ratio * 100)}%`;
@@ -52,3 +49,5 @@ function ratioToPerc(ratio) {
 function roundTwoDecimals(num) {
   return Math.round(num * 100) / 100;
 }
+
+export default BoardOverlay;

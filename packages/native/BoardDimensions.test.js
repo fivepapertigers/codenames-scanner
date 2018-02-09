@@ -1,5 +1,4 @@
 import * as BoardDimensions from "./BoardDimensions";
-import { Card } from "./Models";
 
 it("returns the width of the card", () => {
   expect(BoardDimensions.cardWidthPixels(9072)).toBe(1764);
@@ -10,12 +9,12 @@ it("returns the width of the margin", () => {
 });
 
 it("returns the left position of the card", () => {
-  const card = new Card(1, 1);
+  const card = {row: 1, col: 1};
   expect(BoardDimensions.cardLeftPixels(9072, card)).toBe(1890);
 });
 
 it("returns the left position of the card as ratio", () => {
-  const card = new Card(1, 1);
+  const card = {row: 1, col: 1};
   expect(BoardDimensions.cardLeftRatio(card)).toBe(45 / 216);
 });
 
@@ -28,11 +27,11 @@ it("returns the height of the margin", () => {
 });
 
 it("returns the top position of the card", () => {
-  const card = new Card(1, 1);
+  const card = {row: 1, col: 1};
   expect(BoardDimensions.cardTopPixels(4212, card)).toBe(1092);
 });
 
 it("returns the top position of the card as a ratio", () => {
-  const card = new Card(1, 1);
+  const card = {row: 1, col: 1};
   expect(BoardDimensions.cardTopRatio(card)).toBe(42 / 162);
 });
