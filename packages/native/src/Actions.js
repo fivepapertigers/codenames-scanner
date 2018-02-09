@@ -81,17 +81,19 @@ export function processBoardImage(boardImage) {
     const { board } = getState();
 
     // Process each card in the board in parallel, then resolve
-    return Promise.all(flattenBoard(async ({card, row, col}) => {
-      // Slice card image from board and dispatch
-      const cardImage = await slicer(row, col);
-      dispatch(addImageToCard(row, col, cardImage));
+    return Promise.all(flattenBoard({
+        transform: async ({row, col}) => {
+          // Slice card image from board and dispatch
+          const cardImage = await slicer(row, col);
+          dispatch(addImageToCard(row, col, cardImage));
 
-      // Run term detection and dispatch
-      // const termResult = await detectTerm(cardImage);
-      const termResult = await mockDetectTerm(row, col);
-      dispatch(addTermToCard(row, col, termResult));
+          // Run term detection and dispatch
+          // const termResult = await detectTerm(cardImage);
+          const termResult = await mockDetectTerm(row, col);
+          dispatch(addTermToCard(row, col, termResult));
 
-      return;
+          return;
+      }
     })(board));
   };
 }

@@ -13,7 +13,7 @@ import CardList from "../components/CardList";
 
 const ListContainer = ({ board, toggleCovered }) => {
   const assassinCard =
-    flattenBoard(null, ({ card }) => card.type === CardTypes.Assassin)(board)[0];
+    flattenBoard({sort: ({ card }) => card.type === CardTypes.Assassin})(board)[0];
   return (
     <View
       style={{

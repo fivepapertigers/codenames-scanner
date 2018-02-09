@@ -19,8 +19,8 @@ const CardList = ({ board, cardType, toggleCardCovered }) => {
         justifyContent: "flex-start"
       }}
     >
-      {flattenBoard(
-        ({card, row, col}) => (
+      {flattenBoard({
+        transform: ({card, row, col}) => (
           <TouchableOpacity
             style={{
               flex: 1
@@ -33,9 +33,9 @@ const CardList = ({ board, cardType, toggleCardCovered }) => {
             <CardTerm card={card}/>
           </TouchableOpacity>
         ),
-        ({ card }) => card.type === cardType,
-        sortCardsByCovered,
-      )(board)}
+        filter: ({ card }) => card.type === cardType,
+        sort: sortCardsByCovered,
+      })(board)}
     </View>
   );
 };

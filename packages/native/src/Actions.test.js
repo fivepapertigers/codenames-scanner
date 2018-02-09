@@ -91,27 +91,31 @@ describe("process board image", () => {
 
   test("adds image to each card", async () => {
     await Actions.processBoardImage(boardImage)(dispatch, getState);
-    flattenBoard(({card, row, col, idx}) => {
-      expect(dispatch.mock.calls[idx + 1]).toEqual([{
-        type: "ADD_IMAGE_TO_CARD",
-        row: row,
-        col: col,
-        image: {uri: "somecarduri", width: 100, height: 200}
-      }]);
+    flattenBoard({
+      transform: ({row, col, idx}) => {
+        expect(dispatch.mock.calls[idx + 1]).toEqual([{
+          type: "ADD_IMAGE_TO_CARD",
+          row: row,
+          col: col,
+          image: {uri: "somecarduri", width: 100, height: 200}
+        }]);
+      }
     })(getState().board);
   });
 
   test("adds term result to each card", async () => {
     await Actions.processBoardImage(boardImage)(dispatch, getState);
-    flattenBoard(({card, row, col, idx}) => {
-      expect(dispatch.mock.calls[idx + 26]).toEqual([{
-        type: "ADD_TERM_TO_CARD",
-        row: row,
-        col: col,
-        termResult: {
-          id: "TERM_RESULT_ID", "term": "TERM", "confidence": .5
-        }
-      }]);
+    flattenBoard({
+      transform: ({row, col, idx}) => {
+        expect(dispatch.mock.calls[idx + 26]).toEqual([{
+          type: "ADD_TERM_TO_CARD",
+          row: row,
+          col: col,
+          termResult: {
+            id: "TERM_RESULT_ID", "term": "TERM", "confidence": .5
+          }
+        }]);
+      }
     })(getState().board);
   });
 
