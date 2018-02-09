@@ -1,5 +1,6 @@
-import { getImageB64, sliceCardFromBoardImage } from "./ImageProcessor";
 import { ImageEditor, ImageStore } from "react-native";
+
+import { getImageB64, sliceCardFromBoardImage } from ".ImageProcessor";
 import * as BD from "./BoardDimensions";
 
 jest.mock("react-native", () => ({

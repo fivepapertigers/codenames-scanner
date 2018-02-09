@@ -1,4 +1,4 @@
-import { CardTypes } from "./Models";
+import { CardTypes } from "../Constants";
 
 export const getCardColor = cardType => {
   switch (cardType) {

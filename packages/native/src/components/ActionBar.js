@@ -1,7 +1,9 @@
 import React from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import PropTypes from "prop-types";
-import FontAwesome, { Icons } from "react-native-fontawesome";
+import { Icons } from "react-native-fontawesome";
+
+import ActionButton from "./ActionButton";
 
 
 const routeIsActive = navigation => routeName => {
@@ -12,29 +14,6 @@ const routeIfStateChange = navigation => routeName => () => {
   if (!routeIsActive(navigation)(routeName)) {
     navigation.navigate(routeName);
   }
-};
-
-const ActionButton = ({ icon, onPress, isActive }) => (
-  <Text
-    style={{
-      flex: 1,
-      color: isActive ? "#FFAAAA" : "#D46A6A",
-      textAlign: "center",
-      fontSize: 24
-    }}
-    onPress={onPress}
-  >
-    <FontAwesome>
-      {icon}
-    </FontAwesome>
-  </Text>
-);
-
-
-ActionButton.propTypes = {
-  icon: PropTypes.string.isRequired,
-  onPress: PropTypes.func.isRequired,
-  isActive: PropTypes.bool.isRequired
 };
 
 const ActionBar = ({ navigation }) => {

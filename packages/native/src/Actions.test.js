@@ -1,5 +1,5 @@
 import * as Actions from "./Actions";
-import { flattenBoard } from "./BoardUtils";
+import { flattenBoard } from "../helpers/BoardUtils";
 
 jest.mock("./Backend", () => ({
   detectTerm: jest.fn(async () => ({
@@ -7,7 +7,7 @@ jest.mock("./Backend", () => ({
   }))
 }));
 
-jest.mock("./ImageProcessor", () => ({
+jest.mock("../helpers/ImageProcessor", () => ({
   sliceCardFromBoardImage: jest.fn(() => jest.fn(async() => ({
     uri: "somecarduri", width: 100, height: 200
   })))

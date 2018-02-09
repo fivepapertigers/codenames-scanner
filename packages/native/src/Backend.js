@@ -4,7 +4,7 @@
  * @description logic for processing capture images
  */
 
-import { getImageB64 } from "./ImageProcessor";
+import { getImageB64 } from "./helpers/ImageProcessor";
 
 const AUTHORIZATION_URL = "https://eh8d1i5yeb.execute-api.us-east-1.amazonaws.com/dev/image/authorize";
 

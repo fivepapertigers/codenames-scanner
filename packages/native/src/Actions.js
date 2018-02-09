@@ -1,8 +1,8 @@
 /* eslint-env es6 */
 
 import { detectTerm } from "./Backend";
-import { sliceCardFromBoardImage } from "./ImageProcessor";
-import { flattenBoard } from "./BoardUtils";
+import { sliceCardFromBoardImage } from "./helpers/ImageProcessor";
+import { flattenBoard } from "./helpers/BoardUtils";
 import { mockDetectTerm } from "./MockData";
 
 export const CLEAR_BOARD = "CLEAR_BOARD";

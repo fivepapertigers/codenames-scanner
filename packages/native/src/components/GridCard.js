@@ -2,7 +2,7 @@ import React from "react"; // eslint-disable-line no-unused-vars
 import { Text, View, ActivityIndicator, TouchableOpacity } from "react-native"; // eslint-disable-line no-unused-vars
 import FontAwesome, { Icons } from "react-native-fontawesome";
 
-import { getCardColor, getFontColor } from "../ViewHelpers";
+import { getCardColor, getFontColor } from "../helpers/ViewHelpers";
 import CardTerm from "./CardTerm";
 
 const GridCard = ({ card, onPress }) => (

@@ -2,9 +2,9 @@ import React from "react";
 import { Text, View, Button } from "react-native";
 import { connect } from "react-redux";
 
-import { processBoardImage } from "./Actions";
-import ImageCapture from "./components/ImageCapture";
-import BoardOverlay from "./components/BoardOverlay";
+import { processBoardImage } from "../Actions";
+import ImageCapture from "../components/ImageCapture";
+import BoardOverlay from "../components/BoardOverlay";
 
 const BoardCaptureExplanation = ({ closeExplanation }) => {
   return (

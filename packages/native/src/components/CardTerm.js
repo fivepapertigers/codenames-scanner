@@ -2,8 +2,8 @@ import React from "react"; // eslint-disable-line no-unused-vars
 import { Text, View, ActivityIndicator, TouchableHighlight } from "react-native"; // eslint-disable-line no-unused-vars
 import FontAwesome, { Icons } from "react-native-fontawesome";
 
-import { getFontColor } from "../ViewHelpers";
-import { getCardTerm } from "../BoardUtils";
+import { getFontColor } from "../helpers/ViewHelpers";
+import { getCardTerm } from "../helpers/BoardUtils";
 
 const CardTerm = ({ card = {} }) => {
   const term = getCardTerm(card) || "(not found)";

@@ -1,13 +1,13 @@
 import React from "react";
-import { Text, View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity } from "react-native";
 import { connect } from "react-redux";
 
-import { flattenBoard, boardIsProcessing } from "./BoardUtils";
-import { toggleCardCovered } from "./Actions";
-import { CardTypes } from "./Models";
-import { getCardColor, getFontColor } from "./ViewHelpers";
+import { flattenBoard } from "../helpers/BoardUtils";
+import { toggleCardCovered } from "../Actions";
+import { CardTypes } from "../Constants";
+import { getCardColor } from "../helpers/ViewHelpers";
 
-import CardTerm from "./components/CardTerm";
+import CardTerm from "../components/CardTerm";
 
 const flattenBoardByType = cardType => processFunc =>
   flattenBoard((card, ...args) =>

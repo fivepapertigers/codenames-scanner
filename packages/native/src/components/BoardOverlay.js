@@ -1,8 +1,8 @@
 import React from "react";
 import { View } from "react-native";
 
-import { generateEmptyBoard, flattenBoard } from "../BoardUtils";
-import * as BoardDimensions from "../BoardDimensions";
+import { generateEmptyBoard, flattenBoard } from "../helpers/BoardUtils";
+import * as BoardDimensions from "../helpers/BoardDimensions";
 
 const BOARD = generateEmptyBoard();
 

@@ -3,9 +3,9 @@ import React from "react"; // eslint-disable-line no-unused-vars
 import { Text, View, ActivityIndicator, ScrollView, TouchableHighlight } from "react-native"; // eslint-disable-line no-unused-vars
 import { connect } from "react-redux";
 
-import { toggleCardCovered } from "./Actions";
-import ActionBar from "./components/ActionBar"; // eslint-disable-line no-unused-vars
-import GridCard from "./components/GridCard"; // eslint-disable-line no-unused-vars
+import { toggleCardCovered } from "../Actions";
+import ActionBar from "../components/ActionBar"; // eslint-disable-line no-unused-vars
+import GridCard from "../components/GridCard"; // eslint-disable-line no-unused-vars
 
 const GridScreen = ({ board, dispatch }) => {
   return (

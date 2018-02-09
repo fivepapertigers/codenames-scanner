@@ -1,6 +1,6 @@
 import * as Actions from "./Actions";
-import { CardTypes } from "./Models";
-import { generateEmptyBoard } from "./BoardUtils";
+import { CardTypes } from "./Constants";
+import { generateEmptyBoard } from "./helpers/BoardUtils";
 
 import shuffle from "shuffle-array";
 
