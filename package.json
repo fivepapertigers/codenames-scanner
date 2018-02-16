@@ -19,6 +19,5 @@
   "scripts": {
     "lint": "eslint --config ./.eslintrc ./"
   },
-  "license": "MIT",
-  "dependencies": {}
+  "license": "MIT"
 }
