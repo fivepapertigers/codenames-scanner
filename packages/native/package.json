@@ -13,14 +13,13 @@
   "devDependencies": {
     "eslint-plugin-jest": "^21.7.0",
     "jest-expo": "^25.0.0",
-    "react-native-scripts": "1.9.0",
     "react-test-renderer": "^16.0.0"
   },
   "jest": {
     "preset": "jest-expo"
   },
   "license": "MIT",
-  "main": "./node_modules/react-native-scripts/build/bin/crna-entry.js",
+  "main": "node_modules/expo/AppEntry.js",
   "name": "codenames-scanner-native",
   "private": true,
   "rnpm": {
@@ -29,11 +28,7 @@
     ]
   },
   "scripts": {
-    "android": "react-native-scripts android",
-    "eject": "react-native-scripts eject",
-    "ios": "react-native-scripts ios",
     "sls": "serverless",
-    "start": "react-native-scripts start",
     "test": "npx jest"
   },
   "version": "0.1.0"
