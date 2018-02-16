@@ -13,6 +13,7 @@
     "rand-token": "^0.4.0",
     "react": "16.0.0",
     "react-native": "0.50.3",
+    "redux": "^3.7.2",
     "simple-node-logger": "^0.93.33",
     "tesseract.js": "^1.0.10"
   },

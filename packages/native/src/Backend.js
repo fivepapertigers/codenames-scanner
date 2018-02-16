@@ -4,38 +4,9 @@
  * @description logic for processing capture images
  */
 
-import { ImageEditor, ImageStore } from "react-native";
-import {
-  cardWidthPixels, cardHeightPixels, cardLeftPixels, cardTopPixels
-} from "./BoardDimensions";
-import { CardImage } from "./Models";
+import { getImageB64 } from "./helpers/ImageProcessor";
 
 const AUTHORIZATION_URL = "https://eh8d1i5yeb.execute-api.us-east-1.amazonaws.com/dev/image/authorize";
-
-export function sliceImageIntoCards (image, board) {
-  const width = Math.round(cardWidthPixels(image.width)),
-    height = Math.round(cardHeightPixels(image.height));
-  return Promise.all(board.cards.map((card) => {
-      const cropData = {
-        offset: {
-          x: cardLeftPixels(image.width, card),
-          y: cardTopPixels(image.height, card)
-        },
-        size: {
-          width: width,
-          height: height
-        },
-      };
-
-      return cropImage(image.uri, cropData)
-        .then(uri => new CardImage(card, { uri, width, height }));
-  }));
-}
-
-function cropImage(uri, cropData) {
-  return new Promise(
-    (res, rej) => ImageEditor.cropImage(uri, cropData, res, rej));
-}
 
 
 export async function detectTerm(image) {
@@ -49,7 +20,11 @@ export async function detectTerm(image) {
     }
     await timeout(300);
   }
-  return null;
+  return {
+    id: null,
+    term: null,
+    confidence: 0
+  };
 }
 
 async function authorizeUpload() {
@@ -83,10 +58,6 @@ async function prepareUpload(uploadFields, image) {
   const img64 = await getImageB64(image);
   formData.append("file", img64);
   return formData;
-}
-
-async function getImageB64(image) {
-  return new Promise((res, rej) => ImageStore.getBase64ForTag(image.uri, res, rej));
 }
 
 async function retrieveResult(url) {
