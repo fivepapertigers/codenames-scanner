@@ -99,3 +99,9 @@ xcuserdata
 *.moved-aside
 DerivedData
 *.xcuserstate
+
+*.idea
+*.iml
+*.gradle
+*local.properties
+**/android/app/src/main/java/host/exp/exponent/generated

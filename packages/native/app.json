@@ -2,12 +2,12 @@
   "expo": {
     "sdkVersion": "25.0.0",
     "ios": {
-      "bundleIdentifier": "codenames-scanner",
+      "bundleIdentifier": "com.codenamesscanner.scanner",
       "publishBundlePath": "ios/codenames-scanner-native/Supporting/shell-app.bundle",
       "publishManifestPath": "ios/codenames-scanner-native/Supporting/shell-app-manifest.json"
     },
     "android": {
-      "package": "codenames-scanner"
+      "package": "com.codenamesscanner.scanner"
     },
     "name": "codenames-scanner-native",
     "slug": "codenames-scanner-native",
