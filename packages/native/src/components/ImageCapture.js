@@ -64,6 +64,9 @@ export default class ImageCapture extends React.Component {
             type={this.state.type}
             ref={ref => { this.camera = ref; }}
             ratio="4:3"
+            onMountError={(...args) => {
+              console.log("camera error", arg);
+            }}
           >
             <View
               style={{

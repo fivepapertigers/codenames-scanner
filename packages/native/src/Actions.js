@@ -1,7 +1,6 @@
 /* eslint-env es6 */
 
-import { detectTerm } from "./Backend";
-import { sliceCardFromBoardImage } from "./helpers/ImageProcessor";
+import { sliceCardFromBoardImage, findTermFromImage } from "./helpers/ImageProcessor";
 import { flattenBoard } from "./helpers/BoardUtils";
 import { mockDetectTerm } from "./MockData";
 
@@ -68,7 +67,7 @@ export function designateRemainingCards() {
  * @return {(dispatch: function, getState: function)} A redux thunk
  */
 export function processBoardImage(boardImage) {
-  return (dispatch, getState) => {
+  return async (dispatch, getState) => {
     // clear current board
     dispatch(clearBoard());
     dispatch(designateRemainingCards());
@@ -87,9 +86,7 @@ export function processBoardImage(boardImage) {
           const cardImage = await slicer(row, col);
           dispatch(addImageToCard(row, col, cardImage));
 
-          // Run term detection and dispatch
-          // const termResult = await detectTerm(cardImage);
-          const termResult = await mockDetectTerm(row, col);
+          const termResult = await findTermFromImage(cardImage.uri);
           dispatch(addTermToCard(row, col, termResult));
 
           return;
