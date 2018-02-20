@@ -5,7 +5,7 @@
     "react": "16.2.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-25.0.0.tar.gz",
     "react-native-fontawesome": "^5.7.0",
-    "react-native-tesseract-ocr": "git@github.com:newoceaninfosys/react-native-tesseract-ocr#master",
+    "react-native-tesseract-ocr": "https://github.com/fivepapertigers/react-native-tesseract-ocr.git#feature/fix-external-storage-req",
     "react-navigation": "^1.0.0-beta.30",
     "react-redux": "^5.0.6",
     "redux": "^3.7.2",
