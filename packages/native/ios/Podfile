@@ -72,4 +72,7 @@ target 'codenames-scanner-native' do
 
     end
   end
+
+  pod 'TesseractOCRiOS', '4.0.0'
+  pod 'GPUImage', '0.1.7'
 end

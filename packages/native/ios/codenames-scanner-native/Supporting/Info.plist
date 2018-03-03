@@ -91,5 +91,11 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>UIAppFonts</key>
+	<array>
+		<string>CourierNewBold.ttf</string>
+		<string>FontAwesome.ttf</string>
+		<string>SpyAgency.ttf</string>
+	</array>
 </dict>
 </plist>

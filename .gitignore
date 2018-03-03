@@ -105,3 +105,5 @@ DerivedData
 *.gradle
 *local.properties
 **/android/app/src/main/java/host/exp/exponent/generated
+
+*Pods/
