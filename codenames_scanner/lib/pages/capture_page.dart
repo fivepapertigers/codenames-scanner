@@ -1,5 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
 
 List<CameraDescription> cameras;
 
@@ -47,9 +49,12 @@ class _CaptureState extends State<CapturePage> {
         body: new Center(child: new Text('Could not find a camera on your device.'))
       );
     }
-    return new AspectRatio(
-      aspectRatio: controller.value.aspectRatio,
-      child: new CameraPreview(controller)
+    debugPrint(controller.value.aspectRatio.toString());
+    return new Scaffold(
+      body: new AspectRatio(
+          aspectRatio: controller.value.aspectRatio,
+          child: new CameraPreview(controller)
+      )
     );
   }
 }

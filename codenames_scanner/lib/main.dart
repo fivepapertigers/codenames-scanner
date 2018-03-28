@@ -5,6 +5,7 @@ import 'package:camera/camera.dart';
 import 'package:codenames_scanner/reducer.dart';
 import 'package:codenames_scanner/pages/home_page.dart';
 import 'package:codenames_scanner/pages/capture_page.dart';
+import 'package:codenames_scanner/pages/grid_page.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
 Future<Null > main() async {
@@ -32,6 +33,7 @@ class CodeNamesScannerApp extends StatelessWidget {
         routes: {
           HOME_ROUTE: (BuildContext context) => new HomePage(),
           CAPTURE_ROUTE: (BuildContext context) => new CapturePage(),
+          GRID_ROUTE: (BuildContext context) => new GridPage(),
         },
       ),
     );
