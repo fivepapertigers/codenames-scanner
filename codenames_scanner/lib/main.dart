@@ -7,6 +7,7 @@ import 'package:codenames_scanner/pages/home_page.dart';
 import 'package:codenames_scanner/pages/capture_page.dart';
 import 'package:codenames_scanner/pages/grid_page.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:codenames_scanner/components/capture.dart';
 
 Future<Null > main() async {
   cameras = await availableCameras();

@@ -1,16 +1,17 @@
 import 'package:codenames_scanner/models.dart';
+import 'package:flutter/material.dart';
 
 class ClearBoard {}
 
 class AddBoardImage {
-  final Image image;
+  final ImageModel image;
   AddBoardImage(this.image);
 }
 
 class AddImageToCard {
   final int row;
   final int col;
-  final Image image;
+  final ImageModel image;
   AddImageToCard(this.row, this.col, this.image);
 }
 

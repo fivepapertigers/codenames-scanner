@@ -6,7 +6,7 @@ import 'dart:math';
 @immutable
 class AppState {
   final List<List<BoardCard>> board;
-  final Image boardImage;
+  final ImageModel boardImage;
   AppState({this.board, this.boardImage});
   static combine(AppState prevState, AppState newState) {
     return new AppState(

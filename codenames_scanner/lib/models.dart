@@ -1,8 +1,8 @@
-class Image {
+class ImageModel {
   final String uri;
   final int width;
   final int height;
-  Image(this.uri, this.width, this.height);
+  ImageModel(this.uri, this.width, this.height);
 }
 
 class TermResult {
@@ -19,7 +19,7 @@ class BoardCard {
   final int type;
   final TermResult termResult;
   final bool covered;
-  final Image image;
+  final ImageModel image;
 
   BoardCard({this.termResult, this.type, this.covered, this.image});
 
