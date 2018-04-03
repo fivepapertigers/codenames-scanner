@@ -8,6 +8,7 @@ import 'package:codenames_scanner/pages/capture_page.dart';
 import 'package:codenames_scanner/pages/grid_page.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:codenames_scanner/components/capture.dart';
+import 'package:redux_thunk/redux_thunk.dart';
 
 Future<Null > main() async {
   cameras = await availableCameras();
@@ -20,7 +21,7 @@ const CAPTURE_ROUTE = '/capture';
 class CodeNamesScannerApp extends StatelessWidget {
 
   final Store<AppState> store = new Store<AppState>(
-    appReducer, initialState: initialState
+    appReducer, initialState: initialState, middleware: [thunkMiddleware]
   );
 
   @override

@@ -1,5 +1,10 @@
 import 'package:codenames_scanner/models.dart';
-import 'package:flutter/material.dart';
+import 'package:codenames_scanner/reducer.dart' show AppState;
+import 'package:codenames_scanner/utils/image.dart';
+import 'package:redux/redux.dart';
+import 'package:codenames_scanner/utils/util.dart';
+import 'package:codenames_scanner/utils/grid.dart';
+import 'dart:async';
 
 class ClearBoard {}
 
@@ -13,6 +18,13 @@ class AddImageToCard {
   final int col;
   final ImageModel image;
   AddImageToCard(this.row, this.col, this.image);
+}
+
+class AddCoordinatesToCard {
+  final int row;
+  final int col;
+  final Corners coordinates;
+  AddCoordinatesToCard(this.row, this.col, this.coordinates);
 }
 
 class AddTermToCard {
@@ -29,43 +41,32 @@ class ToggleCardCovered {
   ToggleCardCovered(this.row, this.col);
 }
 
+class UpdateGridCorner {
+  final Corner corner;
+  final Offset coordinates;
+
+  UpdateGridCorner(this.corner, this.coordinates);
+}
+
 class DesignateCards {}
 
-//
-// **
-// * Given a new board image:
-// *   1) Clear current board
-// *   2) Dispatch new image
-// *   3) Slice into cards
-// *   4) Detect terms for cards
-// * @param  {Image} boardImage
-// * @return {(dispatch: function, getState: function)} A redux thunk
-// */
-//export function processBoardImage(boardImage) {
-//  return async (dispatch, getState) => {
-//    // clear current board
-//    dispatch(clearBoard());
-//    dispatch(designateRemainingCards());
-//
-//    // add image to board
-//    dispatch(addImageToBoard(boardImage));
-//
-//    // slice each image
-//    const slicer = sliceCardFromBoardImage(boardImage);
-//    const { board } = getState();
-//
-//  // Process each card in the board in parallel, then resolve
-//  return Promise.all(flattenBoard({
-//  transform: async ({row, col}) => {
-//  // Slice card image from board and dispatch
-//  const cardImage = await slicer(row, col);
-//  dispatch(addImageToCard(row, col, cardImage));
-//
-//  const termResult = await findTermFromImage(cardImage.uri);
-//  dispatch(addTermToCard(row, col, termResult));
-//
-//  return;
-//  }
-//  })(board));
-//};
-//}
+
+Future<void> processBoardImage (Store<AppState> store) async {
+  List<List<Corners>> coordinates = getCardCoordinates(store.state.gridCorners);
+  await Future.wait(mapReduce<List<Future<void>>, List<Future<void>>>(
+    mapWithIndex(coordinates, ((List<Corners> coordinatesList, int row) =>
+      mapWithIndex(coordinatesList, (Corners coordinates, int col) async =>
+        processCard(store, row, col, coordinates))
+    )),
+    (List<Future<void>> combined, List<Future<void>> item) => new List.from(combined)..addAll(item),
+    initial: []
+  ));
+}
+
+
+Future<void> processCard (Store<AppState> store, int row, int col, Corners coordinates) async {
+  ImageModel boardImage = store.state.boardImage;
+  store.dispatch(new AddCoordinatesToCard(row, col, coordinates));
+  ImageModel cardImage = await cropFromCoordinates(boardImage, coordinates);
+  store.dispatch(new AddImageToCard(row, col, cardImage));
+}

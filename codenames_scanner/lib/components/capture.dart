@@ -1,12 +1,8 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
 import 'dart:async';
-import 'package:uuid/uuid.dart';
 import 'package:codenames_scanner/models.dart';
-import 'package:flutter/services.dart';
-import 'package:image/image.dart' as ImageLib;
+
 
 
 List<CameraDescription> cameras;
@@ -57,28 +53,12 @@ class _CaptureState extends State<CaptureComponent> {
   }
 
   Future<Null> capture() async {
-    debugPrint('happening');
     if (!mounted) {
       return;
     }
-    final Directory tempDir = await getTemporaryDirectory();
-    List<int> imgData;
-    String path = 'assets/fake-image.jpg';
-    if (!initialized()) {
-      ByteData byteData = await rootBundle.load(path);
-      imgData = byteData.buffer.asUint8List();
-
-    } else {
-      final String tempPath = tempDir.path;
-      final String uuid = new Uuid().toString();
-      final String path = '${tempPath}/${uuid}.jpg';
-      await controller.capture(path);
-      File imgFile = new File(path);
-      imgData = await imgFile.readAsBytes();
-    }
-    ImageLib.Image image = ImageLib.decodeImage(imgData);
-    debugPrint(image.width.toString() + image.height.toString());
-    imageCaptured(new ImageModel(path, image.width, image.height));
+    String path = await ImageModel.generatePath();
+    await controller.capture(path);
+    imageCaptured(await ImageModel.fromPath(path));
   }
 
   @override

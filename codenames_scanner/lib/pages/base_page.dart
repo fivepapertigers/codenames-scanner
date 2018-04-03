@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class BasePage extends StatelessWidget {
-  Widget widget;
+  final Widget widget;
 
-  BasePage(this.widget) {}
+  BasePage(this.widget);
 
   @override
   build (BuildContext context) {

@@ -17,6 +17,7 @@ dependencies:
   path_provider: ^0.4.0
   uuid: 0.5.3
   image: 1.1.30
+  redux_thunk: ^0.1.1
 
 dev_dependencies:
   flutter_test:
