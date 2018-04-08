@@ -1,3 +1,4 @@
+import 'package:codenames_scanner/models.dart';
 
 List<R> mapWithIndex<T, R>(List<T> list, R Function(T, int) func) {
   return list
@@ -18,4 +19,20 @@ R mapReduce<T, R>(List<T>list, R Function(R combined, T item) reducer, {R initia
     result = reducer(result, item);
   });
   return result;
+}
+
+List<BoardCard> generateNewBoardRow() {
+  return [
+    new BoardCard(), new BoardCard(), new BoardCard(), new BoardCard(), new BoardCard()
+  ];
+}
+
+List<List<BoardCard>> generateNewBoard() {
+  return [
+    generateNewBoardRow(),
+    generateNewBoardRow(),
+    generateNewBoardRow(),
+    generateNewBoardRow(),
+    generateNewBoardRow(),
+  ];
 }

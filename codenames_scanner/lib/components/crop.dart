@@ -18,14 +18,14 @@ class _GridCornerVM {
 }
 
 
-class DrawGridComponent extends StatelessWidget {
+class CropComponent extends StatelessWidget {
 
   final ImageModel boardImage;
   final Function() gridSet;
   final Corners gridCorners;
   final Function(Corner, Offset) cornerUpdated;
 
-  DrawGridComponent({key, this.boardImage, this.gridSet, this.cornerUpdated, this.gridCorners}): super(key: key);
+  CropComponent({key, this.boardImage, this.gridSet, this.cornerUpdated, this.gridCorners}): super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +54,11 @@ class GridOverlay extends StatelessWidget {
 
   onCornerChange(Size size, Corner corner, Offset coordinates) {
     double ratio = boardImage.height / size.height;
-    Offset adjustedCoordinates = new Offset(coordinates.dx * ratio, coordinates.dy * ratio);
+    Offset oldCoordinates = corners.get(corner);
+    Offset adjustedCoordinates = new Offset(
+      oldCoordinates.dx + coordinates.dx * ratio,
+      oldCoordinates.dy + coordinates.dy * ratio
+    );
     Corners newCorners = corners.updateCorner(corner, adjustedCoordinates);
     if (validateCorners(newCorners)) {
       cornerUpdated(corner, adjustedCoordinates);
@@ -70,7 +74,7 @@ class GridOverlay extends StatelessWidget {
           child: new CustomPaint(
             size: _getSize(context),
             painter: new GridLinePainter(
-              corners, cornerWidth, boardImage.width
+              corners, visibleWidth, boardImage.width
             ),
           )
         )
@@ -116,8 +120,8 @@ class GridCorner extends StatelessWidget {
 
   onDragging (DragUpdateDetails details) {
     Offset coordinates = new Offset(
-      vm.coordinates.dx + details.delta.dx,
-      vm.coordinates.dy + details.delta.dy
+      details.delta.dx,
+      details.delta.dy
     );
     vm.onCornerChange(vm.corner, coordinates);
   }
@@ -125,38 +129,22 @@ class GridCorner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new Positioned(
-        left: vm.coordinates.dx,
-        top: vm.coordinates.dy,
+        left: vm.coordinates.dx - vm.width / 2,
+        top: vm.coordinates.dy - vm.width / 2,
         child: new GestureDetector(
             onPanUpdate: onDragging,
             child: new SizedBox(
-                width: vm.width,
-                height: vm.width,
-                child: new CustomPaint(painter: new CirclePainter(vm.visibleWidth))
+              width: vm.width,
+              height: vm.width,
+              child: new DecoratedBox(
+                decoration: new BoxDecoration(
+                  color: Colors.transparent,
+                  shape: BoxShape.rectangle
+                )
+              )
             )
         )
     );
-  }
-}
-
-
-class CirclePainter extends CustomPainter {
-
-  final double width;
-
-  CirclePainter(this.width);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    canvas.drawCircle(
-      new Offset(size.height/2, size.height/2), width/2,
-      new Paint()..color = Colors.red
-    );
-  }
-
-  @override
-  bool shouldRepaint(CirclePainter oldDelegate) {
-    return false;
   }
 }
 
@@ -165,14 +153,19 @@ class GridLinePainter extends CustomPainter {
   final Corners corners;
   final double cornerWidth;
   final double imageWidth;
-  Size size;
 
   GridLinePainter(
     this.corners, this.cornerWidth, this.imageWidth);
 
   @override
-  void paint(Canvas canvas, Size _size) {
-    size = _size;
+  void paint(Canvas canvas, Size size) {
+    corners.all.forEach((Offset corner) =>
+      canvas.drawCircle(
+        _applyRatioToOffset(corner, size), cornerWidth/2,
+        new Paint()..color = Colors.red
+      )
+    );
+
     _drawAxisLines(
         canvas, size,
         Corner.TOP_LEFT, Corner.TOP_RIGHT,
@@ -199,11 +192,18 @@ class GridLinePainter extends CustomPainter {
   }
 
   void _drawLine(Canvas canvas, Size size, Offset start, Offset end) {
-    double ratio = size.width / imageWidth;
+    start = _applyRatioToOffset(start, size);
+    end = _applyRatioToOffset(end, size);
     canvas.drawLine(
-        new Offset(start.dx * ratio + cornerWidth / 2, start.dy  * ratio + cornerWidth / 2),
-        new Offset(end.dx  * ratio + cornerWidth / 2, end.dy  * ratio + cornerWidth / 2),
+        new Offset(start.dx, start.dy),
+        new Offset(end.dx, end.dy),
         new Paint()..color = Colors.red
     );
   }
+
+  Offset _applyRatioToOffset (Offset offset, Size size) {
+    double ratio = size.width / imageWidth;
+    return new Offset(offset.dx * ratio, offset.dy * ratio);
+  }
+
 }

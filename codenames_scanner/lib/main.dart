@@ -3,40 +3,35 @@ import 'package:flutter/material.dart';
 import 'package:redux/redux.dart';
 import 'package:camera/camera.dart';
 import 'package:codenames_scanner/reducer.dart';
-import 'package:codenames_scanner/pages/home_page.dart';
-import 'package:codenames_scanner/pages/capture_page.dart';
-import 'package:codenames_scanner/pages/grid_page.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:codenames_scanner/components/capture.dart';
 import 'package:redux_thunk/redux_thunk.dart';
+import 'package:codenames_scanner/routes.dart';
+import 'package:codenames_scanner/actions.dart';
+
 
 Future<Null > main() async {
-  cameras = await availableCameras();
-  runApp(new CodeNamesScannerApp());
+  runApp(new CodeNamesScannerApp(await availableCameras()));
 }
-
-const HOME_ROUTE = '/';
-const CAPTURE_ROUTE = '/capture';
 
 class CodeNamesScannerApp extends StatelessWidget {
 
   final Store<AppState> store = new Store<AppState>(
-    appReducer, initialState: initialState, middleware: [thunkMiddleware]
+      appReducer, initialState: initialState, middleware: [thunkMiddleware]
   );
+
+  CodeNamesScannerApp(List<CameraDescription> cameras){
+    store.dispatch(new LoadCameras(cameras));
+  }
 
   @override
   Widget build(BuildContext context) {
     final title = 'Codenames Scanner';
-    return new StoreProvider(
+    return new StoreProvider<AppState>(
       store: store,
       child: new MaterialApp(
         theme: new ThemeData.dark(),
         title: title,
-        routes: {
-          HOME_ROUTE: (BuildContext context) => new HomePage(),
-          CAPTURE_ROUTE: (BuildContext context) => new CapturePage(),
-          GRID_ROUTE: (BuildContext context) => new GridPage(),
-        },
+        routes: routes.builderMap,
       ),
     );
   }

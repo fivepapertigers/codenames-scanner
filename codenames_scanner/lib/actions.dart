@@ -1,10 +1,11 @@
 import 'package:codenames_scanner/models.dart';
-import 'package:codenames_scanner/reducer.dart' show AppState;
+import 'package:codenames_scanner/reducer.dart';
 import 'package:codenames_scanner/utils/image.dart';
 import 'package:redux/redux.dart';
 import 'package:codenames_scanner/utils/util.dart';
 import 'package:codenames_scanner/utils/grid.dart';
 import 'dart:async';
+import 'package:camera/camera.dart';
 
 class ClearBoard {}
 
@@ -33,6 +34,21 @@ class AddTermToCard {
   final TermResult termResult;
   AddTermToCard(this.row, this.col, this.termResult);
 }
+
+class LoadCameras {
+  final List<CameraDescription> cameras;
+  LoadCameras(this.cameras);
+}
+
+
+class AddCameraController {
+  final CameraController cameraController;
+  AddCameraController(this.cameraController);
+}
+
+
+class RemoveCameraController {}
+
 
 class ToggleCardCovered {
   final int row;
@@ -69,4 +85,32 @@ Future<void> processCard (Store<AppState> store, int row, int col, Corners coord
   store.dispatch(new AddCoordinatesToCard(row, col, coordinates));
   ImageModel cardImage = await cropFromCoordinates(boardImage, coordinates);
   store.dispatch(new AddImageToCard(row, col, cardImage));
+}
+
+
+Future<void> activateCamera(Store<AppState> store) async {
+  List<CameraDescription> cameras = store.state.cameras;
+  print(cameras);
+  if (cameras.length > 0) {
+    CameraDescription camera = store.state.cameras.firstWhere(
+      (cam) => cam.lensDirection == CameraLensDirection.back,
+      orElse: () => null);
+    CameraController controller = new CameraController(camera, ResolutionPreset.high);
+    await controller.initialize();
+    print(controller);
+    store.dispatch(new AddCameraController(controller));
+  }
+}
+
+
+Future<void> captureImage(Store<AppState> store) async {
+  ImageModel image = await captureImageFromCamera(store.state.cameraController);
+  store.dispatch(new AddBoardImage(image));
+  await deactivateCamera(store);
+
+}
+
+Future<void> deactivateCamera(Store<AppState> store) async {
+  await store.state.cameraController.dispose();
+  store.dispatch(new RemoveCameraController());
 }

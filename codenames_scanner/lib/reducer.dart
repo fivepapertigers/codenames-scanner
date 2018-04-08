@@ -4,19 +4,67 @@ import 'package:meta/meta.dart';
 import 'dart:math';
 import 'package:codenames_scanner/utils/util.dart';
 import 'package:codenames_scanner/utils/grid.dart';
+import 'package:camera/camera.dart';
+
+
+class TransientAppState {
+  List<List<BoardCard>> board;
+  ImageModel boardImage;
+  Corners gridCorners;
+  List<CameraDescription> cameras;
+  CameraController cameraController;
+
+
+  static TransientAppState fromAppState(AppState state) {
+    return new TransientAppState()
+      ..board = state.board
+      ..boardImage = state.boardImage
+      ..gridCorners = state.gridCorners
+      ..cameras = state.cameras
+      ..cameraController = state.cameraController
+      ;
+  }
+
+  AppState finalize() {
+    return AppState.fromTransient(this);
+  }
+
+  String toString() {
+    return ('TransientAppState <board: $board / boardImage: $boardImage / '+
+            'gridCorners: $gridCorners / cameras: $cameras / ' +
+            'cameraController: $cameraController>');
+  }
+}
+
 
 @immutable
 class AppState {
   final List<List<BoardCard>> board;
   final ImageModel boardImage;
   final Corners gridCorners;
-  AppState({this.board, this.boardImage, this.gridCorners});
-  static combine(AppState prevState, AppState newState) {
-    return new AppState(
-      board: newState.board == null ? prevState.board : newState.board,
-      boardImage: newState.boardImage== null ? prevState.boardImage: newState.boardImage,
-      gridCorners: newState.gridCorners== null ? prevState.gridCorners: newState.gridCorners
+  final List<CameraDescription> cameras;
+  final CameraController cameraController;
+
+  AppState({
+    this.board, this.boardImage, this.gridCorners,
+    this.cameras, this.cameraController
+  });
+
+
+  static fromTransient(TransientAppState state) =>
+    new AppState(
+      board: state.board,
+      boardImage: state.boardImage,
+      gridCorners: state.gridCorners,
+      cameras: state.cameras,
+      cameraController: state.cameraController
     );
+
+
+  String toString() {
+    return ('AppState <board: $board / boardImage: $boardImage / '+
+        'gridCorners: $gridCorners / cameras: $cameras / ' +
+        'cameraController: $cameraController>');
   }
 }
 
@@ -25,32 +73,35 @@ AppState initialState = new AppState(
   gridCorners: new Corners(
       new Offset(50.0, 50.0), new Offset(200.0, 50.0),
       new Offset(50.0, 200.0), new Offset(200.0, 200.0)
-  )
+  ),
+  cameras: []
 );
 
-AppState appReducer(AppState currentState, action) {
+AppState appReducer(AppState state, action) {
+  TransientAppState newState = transientReducer(TransientAppState.fromAppState(state), action);
+  AppState finalized = newState.finalize();
+  return finalized;
+}
 
-  var state = new AppState();
+
+TransientAppState transientReducer(TransientAppState state, action) {
 
   if (action is ClearBoard) {
-    state = new AppState(board: generateNewBoard());
+    return state..board = generateNewBoard();
   } else if (action is AddTermToCard) {
-    state = modifyCardAttributes(
-      action.row, action.col, new BoardCard(termResult: action.termResult)
-    )(currentState);
+    return modifyCardAttributes(
+        action.row, action.col, new BoardCard(termResult: action.termResult)
+    )(state);
   } else if (action is AddImageToCard) {
-    state = modifyCardAttributes(
+    return modifyCardAttributes(
         action.row, action.col, new BoardCard(image: action.image)
-    )(currentState);
+    )(state);
   } else if (action is ToggleCardCovered) {
-    state = updateCard(
+    return updateCard(
       action.row, action.col, (card) => card.update(new BoardCard(covered: card.covered))
-    )(currentState);
+    )(state);
   } else if (action is AddBoardImage) {
-    state = new AppState(
-      boardImage: action.image,
-      gridCorners: defaultCornersFromImage(action.image)
-    );
+    return state..boardImage = action.image;
   } else if (action is DesignateCards) {
 
     var rand = new Random();
@@ -71,28 +122,29 @@ AppState appReducer(AppState currentState, action) {
     }
     list.shuffle();
 
-    state = updateCards((row, col, card) =>
+    return updateCards((row, col, card) =>
       card.update(new BoardCard(type: list[row * 5 + col]))
-    )(currentState);
+    )(state);
   } else if (action is UpdateGridCorner) {
-    state = new AppState(
-      gridCorners: currentState.gridCorners.updateCorner(
+    return state
+      ..gridCorners = state.gridCorners.updateCorner(
         action.corner, action.coordinates
-      )
-    );
+      );
+  } else if (action is LoadCameras) {
+    return state..cameras = action.cameras;
+  } else if (action is AddCameraController) {
+    return state..cameraController = action.cameraController;
+  } else if (action is RemoveCameraController) {
+    return state..cameraController = null;
   }
 
-  return AppState.combine(currentState, state);
+  return state;
 }
 
-typedef AppState StateUpdateFunc(AppState appState);
+typedef TransientAppState StateUpdateFunc(TransientAppState state);
 
 StateUpdateFunc modifyCardAttributes (int row, int col, BoardCard newCard) =>
-  updateCard(row, col, (BoardCard card) {
-    print('Image: ${card.image}');
-    return card.update(newCard);
-  })
-    ;
+  updateCard(row, col, (BoardCard card) => card.update(newCard));
 
 StateUpdateFunc updateCard (int row, int col, BoardCard Function(BoardCard) updateFunc) =>
   updateCards((int innerRow, int innerCol, BoardCard card) =>
@@ -100,25 +152,8 @@ StateUpdateFunc updateCard (int row, int col, BoardCard Function(BoardCard) upda
 
 
 StateUpdateFunc updateCards (BoardCard Function(int, int, BoardCard) updateFunc) =>
-  (AppState state) =>
-    new AppState(
-      board: mapWithIndex(state.board, (List<BoardCard> boardRow, int row) =>
+  (TransientAppState state) =>
+    state
+      ..board = mapWithIndex(state.board, (List<BoardCard> boardRow, int row) =>
         mapWithIndex(boardRow, (BoardCard card, int col) =>
-          updateFunc(row, col, card))));
-
-
-List<BoardCard> generateNewBoardRow() {
-  return [
-    new BoardCard(), new BoardCard(), new BoardCard(), new BoardCard(), new BoardCard()
-  ];
-}
-
-List<List<BoardCard>> generateNewBoard() {
-  return [
-    generateNewBoardRow(),
-    generateNewBoardRow(),
-    generateNewBoardRow(),
-    generateNewBoardRow(),
-    generateNewBoardRow(),
-  ];
-}
+          updateFunc(row, col, card)));

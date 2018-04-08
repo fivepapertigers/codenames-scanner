@@ -1,63 +1,49 @@
 import 'package:flutter/material.dart';
-import 'package:codenames_scanner/reducer.dart';
 import 'package:codenames_scanner/actions.dart';
 import 'package:codenames_scanner/models.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
-import 'package:codenames_scanner/components/capture.dart';
-import 'package:codenames_scanner/components/draw_grid.dart';
+import 'package:camera/camera.dart';
+import 'package:codenames_scanner/reducer.dart';
+
+
 
 class CaptureContainer extends StatelessWidget {
 
+  final Widget Function(BuildContext, CaptureViewModel) builder;
+
+  CaptureContainer(this.builder);
+
   @override
-  Widget build(BuildContext context) {
-
-    return new StoreConnector<AppState, _ViewModel>(
-        builder: (context, vm) {
-          if (vm.boardImage == null) {
-            return new CaptureComponent(imageCaptured: vm.imageCaptured);
-          }
-          return new DrawGridComponent(
-            boardImage: vm.boardImage,
-            gridSet: () {
-              vm.gridSet();
-              Navigator.of(context).pushNamed('/grid');
-            },
-            cornerUpdated: vm.cornerUpdated,
-            gridCorners: vm.gridCorners
-          );
-        },
-        converter: _ViewModel.fromStore
-
+  Widget build(BuildContext context) =>
+    new StoreConnector<AppState, CaptureViewModel>(
+      builder: builder,
+      converter: CaptureViewModel.fromStore
     );
-  }
 }
 
 
-class _ViewModel {
+class CaptureViewModel {
 
   final ImageModel boardImage;
-  final Function(ImageModel) imageCaptured;
-  final Function() gridSet;
-  final Function(Corner, Offset) cornerUpdated;
-  final Corners gridCorners;
+  final Function imageCaptured;
+  final CameraController controller;
+  final Function unloadCamera;
+  final Function loadCamera;
 
-  _ViewModel({
-    this.boardImage, this.imageCaptured, this.gridSet, this.gridCorners,
-    this.cornerUpdated
+  CaptureViewModel({
+    this.boardImage, this.imageCaptured, this.controller,
+    this.unloadCamera, this.loadCamera
   });
 
-  static _ViewModel fromStore(Store<AppState> store) {
-    return new _ViewModel(
+  static CaptureViewModel fromStore(Store<AppState> store) {
+    return new CaptureViewModel(
       boardImage: store.state.boardImage,
-      imageCaptured: (ImageModel image) => store.dispatch(new AddBoardImage(image)),
-      gridCorners: store.state.gridCorners,
-      gridSet: () {
-       processBoardImage(store);
-      },
-      cornerUpdated: ((Corner corner, Offset coordinates) {
-        store.dispatch(new UpdateGridCorner(corner, coordinates));
-      })
+      imageCaptured: () => captureImage(store),
+      controller: store.state.cameraController,
+      unloadCamera: () => deactivateCamera(store),
+      loadCamera: () => activateCamera(store)
     );
   }
+
 }

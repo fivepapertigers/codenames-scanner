@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:async';
 import 'package:uuid/uuid.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:camera/camera.dart';
 
 export 'package:image/image.dart' show Image;
 
@@ -15,7 +16,6 @@ Future<ImageModel> cropFromCoordinates (ImageModel original, Corners coordinates
     coordinates.width.round(),
     coordinates.height.round()
   );
-
   String path = await _tempPath();
   File file = await storeImage(image, path);
   return new ImageModel(path, file: file, image: image);
@@ -25,10 +25,18 @@ Future<ImageModel> cropFromCoordinates (ImageModel original, Corners coordinates
 Future<File> storeImage (Image image, String path) async {
   String path = await _tempPath();
   File file = new File(path);
-  await file.writeAsBytes(image.getBytes());
+  await file.writeAsBytes(encodeJpg(image, quality: 100));
   return file;
 }
 
+
+Future<ImageModel> captureImageFromCamera (CameraController controller) async {
+  String path = await _tempPath();
+  await controller.capture(path);
+  File file = new File(path);
+  Image image = decodeImage(await file.readAsBytes());
+  return new ImageModel(path, file: file, image: image);
+}
 
 Future<String> _tempPath () async {
   String tempPath = (await getTemporaryDirectory()).path;

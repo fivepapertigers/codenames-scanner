@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:codenames_scanner/pages/base_page.dart';
+import 'package:codenames_scanner/pages/_base_page.dart';
 
 
 class HomePage extends StatelessWidget {
@@ -7,7 +7,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new BasePage(
-      new Center(
+      child: new Center(
         child: new Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

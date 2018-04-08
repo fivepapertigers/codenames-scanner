@@ -1,8 +1,5 @@
 import 'dart:io';
-import 'dart:async';
 import 'package:image/image.dart';
-import 'package:uuid/uuid.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart' show Offset;
 import 'dart:math';
 
@@ -16,18 +13,6 @@ class ImageModel {
 
 
   ImageModel(this.uri, {this.file, this.image});
-
-  static Future<ImageModel> fromPath(String path) async {
-    File file = new File(path);
-    Image image = decodeImage(await file.readAsBytes());
-    return new ImageModel(path, file: file, image: image);
-  }
-
-  static Future<String> generatePath () async {
-    String tempPath = (await getTemporaryDirectory()).path;
-    final String uuid = new Uuid().toString();
-    return '$tempPath/$uuid.jpg';
-  }
 
   double get width => image.width.toDouble();
   double get height => image.height.toDouble();
@@ -99,19 +84,19 @@ class Corners {
   }
 
   double get maxX {
-    return _all.map((Offset c) => c.dx).reduce((a, b) => max(a, b));
+    return all.map((Offset c) => c.dx).reduce((a, b) => max(a, b));
   }
 
   double get maxY {
-    return _all.map((Offset c) => c.dy).reduce((a, b) => max(a, b));
+    return all.map((Offset c) => c.dy).reduce((a, b) => max(a, b));
   }
 
   double get minX {
-    return _all.map((Offset c) => c.dx).reduce((a, b) => min(a, b));
+    return all.map((Offset c) => c.dx).reduce((a, b) => min(a, b));
   }
 
   double get minY {
-    return _all.map((Offset c) => c.dy).reduce((a, b) => min(a, b));
+    return all.map((Offset c) => c.dy).reduce((a, b) => min(a, b));
   }
 
   double get width {
@@ -136,7 +121,7 @@ class Corners {
   }
 
 
-  List<Offset> get _all {
+  List<Offset> get all {
     return [topLeft, topRight, bottomRight, bottomLeft];
   }
 

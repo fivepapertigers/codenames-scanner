@@ -9,19 +9,24 @@ class GridComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(board[0][0].image);
     return new Center(
       child: new Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: board.map((List<BoardCard> cards) =>
           new Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: cards.map((BoardCard card) =>
               new Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [card.image == null
                     ? new Text('No image for card')
                     : new SizedBox(
-                  width: 8.0,
-                  height: 8.0,
-                  child: new Image.memory(card.image.image.getBytes()),
+                  width: 130.0,
+                  height: 50.0,
+                  child: new Image.file(card.image.file),
                 )],
               )
             ).toList(),
