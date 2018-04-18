@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'pages/pages.dart';
+import 'package:codenames_scanner/pages/pages.dart';
 
 enum RouteNames {
   Home, Capture, Crop, Grid, List, Reset

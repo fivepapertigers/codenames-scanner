@@ -6,6 +6,7 @@ import 'package:codenames_scanner/utils/util.dart';
 import 'package:codenames_scanner/utils/grid.dart';
 import 'dart:async';
 import 'package:camera/camera.dart';
+import 'package:codenames_scanner/utils/ocr.dart';
 
 class ClearBoard {}
 
@@ -66,6 +67,15 @@ class UpdateGridCorner {
 
 class DesignateCards {}
 
+class SetCurrentLanguage {
+  final String lang;
+  SetCurrentLanguage(this.lang);
+}
+
+class UpdateCurrentLanguageStatus {
+  final LoadingStatus status;
+  UpdateCurrentLanguageStatus(this.status);
+}
 
 Future<void> processBoardImage (Store<AppState> store) async {
   List<List<Corners>> coordinates = getCardCoordinates(store.state.gridCorners);
@@ -85,19 +95,18 @@ Future<void> processCard (Store<AppState> store, int row, int col, Corners coord
   store.dispatch(new AddCoordinatesToCard(row, col, coordinates));
   ImageModel cardImage = await cropFromCoordinates(boardImage, coordinates);
   store.dispatch(new AddImageToCard(row, col, cardImage));
+  print(await runOcr(cardImage.file.path, store.state.currentLanguage));
 }
 
 
 Future<void> activateCamera(Store<AppState> store) async {
   List<CameraDescription> cameras = store.state.cameras;
-  print(cameras);
   if (cameras.length > 0) {
     CameraDescription camera = store.state.cameras.firstWhere(
       (cam) => cam.lensDirection == CameraLensDirection.back,
       orElse: () => null);
-    CameraController controller = new CameraController(camera, ResolutionPreset.high);
+    CameraController controller = new CameraController(camera, ResolutionPreset.low);
     await controller.initialize();
-    print(controller);
     store.dispatch(new AddCameraController(controller));
   }
 }
@@ -105,6 +114,18 @@ Future<void> activateCamera(Store<AppState> store) async {
 
 Future<void> captureImage(Store<AppState> store) async {
   ImageModel image = await captureImageFromCamera(store.state.cameraController);
+  store.dispatch(new UpdateGridCorner(
+    Corner.TOP_LEFT, new Offset(image.width * 0.1, image.height * 0.1)
+  ));
+  store.dispatch(new UpdateGridCorner(
+    Corner.TOP_RIGHT, new Offset(image.width * 0.9, image.height * 0.1)
+  ));
+  store.dispatch(new UpdateGridCorner(
+    Corner.BOTTOM_LEFT, new Offset(image.width * 0.1, image.height * 0.9)
+  ));
+  store.dispatch(new UpdateGridCorner(
+    Corner.BOTTOM_RIGHT, new Offset(image.width * 0.9, image.height * 0.9)
+  ));
   store.dispatch(new AddBoardImage(image));
   await deactivateCamera(store);
 
@@ -113,4 +134,21 @@ Future<void> captureImage(Store<AppState> store) async {
 Future<void> deactivateCamera(Store<AppState> store) async {
   await store.state.cameraController.dispose();
   store.dispatch(new RemoveCameraController());
+}
+
+Future<void> setCurrentLanguage(Store<AppState> store, String lang) async {
+  store.dispatch(new SetCurrentLanguage(lang));
+  store.dispatch(new UpdateCurrentLanguageStatus(
+    await checkTrainedData(lang)
+      ? LoadingStatus.Complete
+      : LoadingStatus.Unstarted
+  ));
+}
+
+Future<void> loadCurrentLanguage(Store<AppState> store) async {
+  store.dispatch(new UpdateCurrentLanguageStatus(LoadingStatus.Started));
+  bool res = await getTrainedData(store.state.currentLanguage);
+  store.dispatch(new UpdateCurrentLanguageStatus(
+    res ? LoadingStatus.Complete : LoadingStatus.Failed
+  ));
 }

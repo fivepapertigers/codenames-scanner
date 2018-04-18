@@ -7,7 +7,6 @@ import 'package:camera/camera.dart';
 import 'package:codenames_scanner/reducer.dart';
 
 
-
 class CaptureContainer extends StatelessWidget {
 
   final Widget Function(BuildContext, CaptureViewModel) builder;
@@ -15,11 +14,12 @@ class CaptureContainer extends StatelessWidget {
   CaptureContainer(this.builder);
 
   @override
-  Widget build(BuildContext context) =>
-    new StoreConnector<AppState, CaptureViewModel>(
-      builder: builder,
-      converter: CaptureViewModel.fromStore
+  Widget build(BuildContext context) {
+    return new StoreConnector<AppState, CaptureViewModel>(
+        builder: builder,
+        converter: CaptureViewModel.fromStore
     );
+  }
 }
 
 

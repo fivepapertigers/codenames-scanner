@@ -36,3 +36,13 @@ List<List<BoardCard>> generateNewBoard() {
     generateNewBoardRow(),
   ];
 }
+
+List<R> flattenMap<T, R>(List<T> list, List<R> Function(T) getSubList) {
+  return mapReduce<T, List<R>>(list, (List<R> combined, T item) {
+    if (combined == null) {
+      combined = new List<R>();
+    }
+    combined.addAll(getSubList(item));
+    return combined;
+  });
+}

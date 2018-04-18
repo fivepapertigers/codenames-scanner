@@ -3,26 +3,19 @@ import 'package:codenames_scanner/actions.dart';
 import 'package:codenames_scanner/models.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
-import 'package:codenames_scanner/components/crop.dart';
-import 'package:codenames_scanner/routes.dart';
 import 'package:codenames_scanner/reducer.dart';
 
 class CropContainer extends StatelessWidget {
+
+  final Widget Function (BuildContext, _ViewModel) builder;
+
+  CropContainer(this.builder);
 
   @override
   Widget build(BuildContext context) {
 
     return new StoreConnector<AppState, _ViewModel>(
-        builder: (context, vm) =>
-          new CropComponent(
-            boardImage: vm.boardImage,
-            gridSet: () {
-              vm.gridSet();
-              routes.navigate(RouteNames.Grid, context);
-            },
-            cornerUpdated: vm.cornerUpdated,
-            gridCorners: vm.gridCorners
-        ),
+        builder: builder,
         converter: _ViewModel.fromStore
     );
   }

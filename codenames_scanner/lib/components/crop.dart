@@ -21,22 +21,15 @@ class _GridCornerVM {
 class CropComponent extends StatelessWidget {
 
   final ImageModel boardImage;
-  final Function() gridSet;
   final Corners gridCorners;
   final Function(Corner, Offset) cornerUpdated;
 
-  CropComponent({key, this.boardImage, this.gridSet, this.cornerUpdated, this.gridCorners}): super(key: key);
+  CropComponent({key, this.boardImage, this.cornerUpdated, this.gridCorners}): super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      body: new Center(
-        child: new GridOverlay(boardImage, cornerUpdated, gridCorners)
-      ),
-      floatingActionButton: new FloatingActionButton(
-        onPressed: gridSet,
-        child: new Icon(Icons.check),
-      ),
+    return new Center(
+      child: new GridOverlay(boardImage, cornerUpdated, gridCorners)
     );
   }
 }
@@ -85,10 +78,10 @@ class GridOverlay extends StatelessWidget {
     );
   }
 
-  List<GridCorner> buildCorners (BuildContext context) {
+  List<Widget> buildCorners (BuildContext context) {
     Size size = _getSize(context);
     double ratio = size.height / boardImage.height;
-    return corners.applyRatio(ratio).map((Corner corner, Offset coordinates) =>
+    return corners.applyRatio(ratio).map<Widget>((Corner corner, Offset coordinates) =>
       new GridCorner(
         new _GridCornerVM(
           corner: corner,

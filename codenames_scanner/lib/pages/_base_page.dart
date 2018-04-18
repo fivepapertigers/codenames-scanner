@@ -17,7 +17,7 @@ class BasePage extends StatelessWidget {
   @override
   build (BuildContext context) {
     return new Scaffold(
-      appBar: showHeader == null ? null : new AppBar(
+      appBar: showHeader ? new AppBar(
         title: new Text('CODENAMES SCANNER'),
         actions: <Widget>[
           new IconButton(
@@ -37,7 +37,7 @@ class BasePage extends StatelessWidget {
               onPressed: () => routes.navigate(RouteNames.Reset, context)
           )
         ],
-      ),
+      ) : null,
       floatingActionButton: button == null ? null : new FloatingActionButton(
         child: button,
         onPressed: buttonCallback

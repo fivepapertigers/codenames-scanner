@@ -34,7 +34,8 @@ Future<ImageModel> captureImageFromCamera (CameraController controller) async {
   String path = await _tempPath();
   await controller.capture(path);
   File file = new File(path);
-  Image image = decodeImage(await file.readAsBytes());
+  List<int> bytes = await file.readAsBytes();
+  Image image = decodeImage(bytes);
   return new ImageModel(path, file: file, image: image);
 }
 

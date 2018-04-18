@@ -13,6 +13,8 @@ class TransientAppState {
   Corners gridCorners;
   List<CameraDescription> cameras;
   CameraController cameraController;
+  LoadingStatus currentLanguageStatus;
+  String currentLanguage;
 
 
   static TransientAppState fromAppState(AppState state) {
@@ -22,6 +24,8 @@ class TransientAppState {
       ..gridCorners = state.gridCorners
       ..cameras = state.cameras
       ..cameraController = state.cameraController
+      ..currentLanguageStatus = state.currentLanguageStatus
+      ..currentLanguage = state.currentLanguage
       ;
   }
 
@@ -44,10 +48,13 @@ class AppState {
   final Corners gridCorners;
   final List<CameraDescription> cameras;
   final CameraController cameraController;
+  final LoadingStatus currentLanguageStatus;
+  final String currentLanguage;
 
   AppState({
     this.board, this.boardImage, this.gridCorners,
-    this.cameras, this.cameraController
+    this.cameras, this.cameraController, this.currentLanguageStatus,
+    this.currentLanguage
   });
 
 
@@ -57,7 +64,9 @@ class AppState {
       boardImage: state.boardImage,
       gridCorners: state.gridCorners,
       cameras: state.cameras,
-      cameraController: state.cameraController
+      cameraController: state.cameraController,
+      currentLanguageStatus: state.currentLanguageStatus,
+      currentLanguage: state.currentLanguage,
     );
 
 
@@ -74,7 +83,8 @@ AppState initialState = new AppState(
       new Offset(50.0, 50.0), new Offset(200.0, 50.0),
       new Offset(50.0, 200.0), new Offset(200.0, 200.0)
   ),
-  cameras: []
+  cameras: [],
+  currentLanguageStatus: LoadingStatus.Unstarted,
 );
 
 AppState appReducer(AppState state, action) {
@@ -136,6 +146,12 @@ TransientAppState transientReducer(TransientAppState state, action) {
     return state..cameraController = action.cameraController;
   } else if (action is RemoveCameraController) {
     return state..cameraController = null;
+  } else if (action is UpdateCurrentLanguageStatus) {
+    return state..currentLanguageStatus = action.status;
+  } else if (action is SetCurrentLanguage) {
+    return state
+      ..currentLanguage = action.lang
+      ..currentLanguageStatus = LoadingStatus.Unstarted;
   }
 
   return state;

@@ -1,5 +1,5 @@
-export '_capture_page.dart';
-export '_crop_page.dart';
-export '_home_page.dart';
-export '_capture_page.dart';
-export '_grid_page.dart';
+export 'package:codenames_scanner/pages/_capture_page.dart';
+export 'package:codenames_scanner/pages/_crop_page.dart';
+export 'package:codenames_scanner/pages/_home_page.dart';
+export 'package:codenames_scanner/pages/_capture_page.dart';
+export 'package:codenames_scanner/pages/_grid_page.dart';

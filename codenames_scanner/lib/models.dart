@@ -149,3 +149,13 @@ class BoardCard {
     );
   }
 }
+
+
+const LANG_ENG = 'eng';
+Map<String, String> languages = {
+  LANG_ENG: 'English'
+};
+
+enum LoadingStatus {
+  Unstarted, Started, Failed, Complete
+}
