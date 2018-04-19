@@ -19,6 +19,7 @@ dependencies:
   image: 1.1.30
   redux_thunk: ^0.2.0
   html: any
+  edit_distance: ^0.3.0
 
 dev_dependencies:
   flutter_test:

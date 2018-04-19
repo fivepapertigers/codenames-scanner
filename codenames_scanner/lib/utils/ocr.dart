@@ -10,6 +10,7 @@ const CHECK_TRAINED_DATA = 'checkTrainedData';
 const GET_TRAINED_DATA = 'getTrainedData';
 
 class OcrWord {
+
   final Element _htmlElement;
 
   OcrWord(this._htmlElement);
@@ -20,38 +21,52 @@ class OcrWord {
 }
 
 class OcrLine {
+
+  static const SEPARATOR = ' ';
   final Element _htmlElement;
 
   OcrLine(this._htmlElement);
 
+  String get text => mapReduce(words, (res, word) => '$res$SEPARATOR${word.text}');
   List<OcrWord> get words => _htmlElement.children.map((e) => new OcrWord(e)).toList();
 
 }
 
 class OcrParagraph {
+
+  static const SEPARATOR = '\n';
   final Element _htmlElement;
 
   OcrParagraph(this._htmlElement);
 
+  String get text => mapReduce(lines, (res, line) => '$res\n${line.text}');
   List<OcrLine> get lines => _htmlElement.children.map((e) => new OcrLine(e)).toList();
   List<OcrWord> get words => flattenMap<OcrLine, OcrWord>(lines, (line) => line.words);
 }
 
 class OcrArea{
+
+  static const SEPARATOR = '\n\n';
+
   final Element _htmlElement;
 
   OcrArea(this._htmlElement);
 
+  String get text => mapReduce(paragraphs, (res, para) => '$res$SEPARATOR${para.text}');
   List<OcrParagraph> get paragraphs => _htmlElement.children.map((e) => new OcrParagraph(e)).toList();
   List<OcrLine> get lines => flattenMap<OcrParagraph, OcrLine>(paragraphs, (par) => par.lines);
   List<OcrWord> get words => flattenMap<OcrLine, OcrWord>(lines, (line) => line.words);
 }
 
 class OcrPage{
+
+  static const SEPARATOR = '\n----------\n';
+
   final Element _htmlElement;
 
   OcrPage(this._htmlElement);
 
+  String get text => mapReduce(areas, (res, area) => '$res$SEPARATOR${area.text}');
   List<OcrArea> get areas => _htmlElement.children.map((e) => new OcrArea(e)).toList();
 
   List<OcrParagraph> get paragraphs => flattenMap<OcrArea, OcrParagraph>(areas, (area) => area.paragraphs);
@@ -61,6 +76,7 @@ class OcrPage{
 
 class OcrDocument {
   final Element _htmlElement;
+  static const SEPARATOR = '\n~~~~~~~~~~~\n';
 
   OcrDocument(this._htmlElement);
   static OcrDocument fromHtmlString(String html) {
@@ -68,6 +84,7 @@ class OcrDocument {
     return new OcrDocument(document.body);
   }
 
+  String get text => mapReduce(pages, (res, page) => '$res$SEPARATOR${page.text}');
   List<OcrPage> get pages => _htmlElement.children.map((e) => new OcrPage(e)).toList();
   List<OcrArea> get areas => flattenMap<OcrPage, OcrArea>(pages, (page) => page.areas);
   List<OcrParagraph> get paragraphs => flattenMap<OcrArea, OcrParagraph>(areas, (area) => area.paragraphs);

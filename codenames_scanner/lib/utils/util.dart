@@ -1,5 +1,6 @@
 import 'package:codenames_scanner/models.dart';
 
+
 List<R> mapWithIndex<T, R>(List<T> list, R Function(T, int) func) {
   return list
     .asMap()
@@ -12,7 +13,6 @@ List<int> count(int num, [int base = 0]) {
   return new List.generate(num, (int i) => i + base).toList();
 }
 
-
 R mapReduce<T, R>(List<T>list, R Function(R combined, T item) reducer, {R initial}) {
   R result = initial;
   list.forEach((T item) {
@@ -20,6 +20,24 @@ R mapReduce<T, R>(List<T>list, R Function(R combined, T item) reducer, {R initia
   });
   return result;
 }
+
+R mapReduceWithIdx<T, R>(List<T>list, R Function(R combined, T item, int idx) reducer, {R initial}) {
+  R result = initial;
+  int idx = 0;
+  list.forEach((T item) {
+    result = reducer(result, item, idx);
+    idx += 1;
+  });
+  return result;
+}
+
+List<R> flatten<R>(List<List<R>>listOfLists) => mapReduce<List<R>, List<R>>(
+  listOfLists,
+  (List<R> flattenedList, innerList) =>
+  new List.from(flattenedList)..addAll(innerList),
+  initial: new List<R>());
+
+
 
 List<BoardCard> generateNewBoardRow() {
   return [

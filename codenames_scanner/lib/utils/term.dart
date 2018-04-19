@@ -1,4 +1,8 @@
 
+import 'package:codenames_scanner/utils/util.dart';
+import 'package:edit_distance/edit_distance.dart';
+
+
 const CODENAMES_LIBRARY = [
   "AFRICA", "AGENT", "AIR", "ALIEN", "ALPS", "AMAZON", "AMBULANCE",
   "AMERICA", "ANGEL", "ANTARCTICA", "APPLE", "ARM", "ATLANTIS", "AUSTRALIA",
@@ -55,112 +59,105 @@ const CODENAMES_LIBRARY = [
 ];
 
 const ONLY_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-const LIBRARY_MATCH_WEIGHT = 20;
-const SINGLE_WORD_WEIGHT = 5;
-const LIBRARY_DISTANCE_WEIGHT = 8;
+const LIBRARY_MATCH_WEIGHT = 20.0;
+const SINGLE_WORD_WEIGHT = 5.0;
+const LIBRARY_DISTANCE_WEIGHT = 8.0;
+RegExp validTermRe = new RegExp(r'^[A-Z]{2,}(\s[A-Z]{2,})?$');
+RegExp multiWordRe = new RegExp(r'\s');
 
 
-//cropImage async (String uri, String cropResult) {
-//  return new Promise(
-//          (res, rej) => ImageEditor.cropImage(uri, cropData, res, rej));
-//}
-//
-//
-//
-//export async function findTermFromImage (imageUri) {
-//  const resultData = await runDetection(imageUri);
-//  return findTermFromResult(resultData);
-//}
-//
-//async function runDetection(imageUri) {
-//  const cleansedUri = decodeURI(imageUri.replace(/file:\/+/, "/"));
-//  const result = await RNTesseractOcr.recognize(cleansedUri, "LANG_ENGLISH", {
-//    whitelist: ONLY_CHARACTERS
-//  });
-//  const lines = result
-//      .split(/\\n/)
-//      .map(text => text.split(/\s/));
-//  return { lines };
-//}
-//
-//function findTermFromResult(resultData) {
-//  const term = validTermsFromResult(resultData)
-//      .reduce(([bestTerm, bestTermWeight], next) => {
-//  const termWeight = weighTerm(next);
-//  if (termWeight > bestTermWeight) {
-//  return [next, termWeight];
-//  } else {
-//  return [bestTerm, bestTermWeight];
-//  }
-//  }, [null, -1])[0];
-//
-//  if (term) {
-//    if (isInLibrary(term)) {
-//      return { term, confidence: 1 };
-//  }
-//  const { libTerm, distance } = libraryBestMatch(term);
-//  return { term: libTerm, confidence: distance };
-//  } else {
-//  return {
-//  term: null,
-//  confidence: 0
-//  };
-//  }
-//}
-//
-//function validTermsFromResult(resultData) {
-//  return resultData.lines
-//      .map(breakLineIntoTerms)
-//      .reduce((terms, termSet) => terms.concat(termSet), [])
-//      .filter(isValidTerm);
-//}
-//
-//function breakLineIntoTerms(lineWords) {
-//  return lineWords.reduce((collA, lineWordA, idxa) =>
-//      collA.concat(
-//          lineWordA,
-//          ... lineWords.slice(idxa + 1)
-//          .reduce(([collB, collC], lineWordB, idxb) =>
-//          [
-//          collB.concat(`${collB[idxb - 1] || lineWordA}${lineWordB}`),
-//      collC.concat(`${collB[idxb - 1] || lineWordA} ${lineWordB}`)
-//      ],
-//      [[], []])
-//  ),
-//  []
-//  );
-//}
-//
-//function weighTerm (term) {
-//  const weighers = [weighLibraryMatch, weighLibraryDistance, weighSingleWord];
-//  return weighers.reduce((total, func) => total + func(term), 0);
-//}
-//
-//function isValidTerm(word) {
-//  return word.length > 2 && word.match(/^[A-Z]{2,}(\s[A-Z]{2,})?$/);
-//}
-//
-//function weighLibraryMatch(term) {
-//  return isInLibrary(term) ? LIBRARY_MATCH_WEIGHT : 0;
-//}
-//
-//function weighLibraryDistance(term) {
-//  return libraryBestMatch(term).distance * LIBRARY_DISTANCE_WEIGHT;
-//}
-//
-//function weighSingleWord(term) {
-//  return term.match(/\s/) ? 0 : SINGLE_WORD_WEIGHT;
-//}
-//
-//function isInLibrary(term) {
-//  return CODENAMES_LIBRARY.indexOf(term) > -1;
-//}
-//
-//function libraryBestMatch(term) {
-//  return CODENAMES_LIBRARY
-//      .map(libTerm => ({ libTerm, distance: jaroWinkler(libTerm, term) }))
-//      .reduce(
-//  (high, next) => high.distance > next.distance ? high : next,
-//  { distance: 0 }
-//  );
-//}
+class TermConfidence {
+  final double confidence;
+  final String term;
+  TermConfidence({this.confidence, this.term});
+}
+
+
+TermConfidence findTermFromLinesOfText(List<List<String>> textLines) {
+  TermConfidence termConfidence = validTermsFromTextLines(textLines)
+    .map((String term) =>
+      new TermConfidence(
+        term: term, confidence: weighTerm(term)
+      )
+    )
+    .reduce((best, next) => best.confidence > next.confidence ? best : next);
+
+  if (termConfidence == null) {
+    return new TermConfidence();
+  }
+
+  return libraryBestMatch(termConfidence.term);
+
+}
+
+List<String> validTermsFromTextLines(List<List<String>> textLines) {
+  return flatten(textLines.map(breakLineIntoTerms).toList())
+     ..retainWhere(isValidTerm);
+}
+
+List<String> breakLineIntoTerms(List<String> line) {
+  return mapReduceWithIdx<String, List<String>>(
+    line,
+    (List<String> resultCollection, String word, int idxA) =>
+      new List<String>.from(resultCollection)
+      ..add(word)
+      ..addAll(mapReduceWithIdx<String, List<List<String>>>(
+          line.getRange(idxA, line.length).toList(),
+          (combinedCollections, innerWord, idxB) {
+            List<String> noSpaceColl = combinedCollections[0];
+            List<String> spacesColl = combinedCollections[1];
+            String lastWord = noSpaceColl.length > 0 ? noSpaceColl.last : word;
+            noSpaceColl.add('$lastWord$innerWord');
+            spacesColl.add('$lastWord $innerWord');
+            return combinedCollections;
+          },
+          initial: new List<List<String>>.of([new List<String>(), new List<String>()])
+        )
+        .reduce((singleColl, item) => singleColl..addAll(item))
+      ),
+    initial: new List<String>()
+  );
+}
+
+typedef Weigher = double Function(String term);
+
+double weighTerm (String term) {
+  List<Weigher> weighers = [weighLibraryMatch, weighLibraryDistance, weighSingleWord];
+  return mapReduce<Weigher, double>(
+      weighers, (weight, weigher) => weight + weigher(term), initial: 0.0);
+}
+
+bool isValidTerm(String word) {
+  return word.length > 2 && validTermRe.hasMatch(word);
+}
+
+double weighLibraryMatch(String term) {
+  return isInLibrary(term) ? LIBRARY_MATCH_WEIGHT : 0.0;
+}
+
+double weighLibraryDistance(String term) {
+  return libraryBestMatch(term).confidence * LIBRARY_DISTANCE_WEIGHT;
+}
+
+double weighSingleWord(String term) {
+  return multiWordRe.hasMatch(term) ? 0.0 : SINGLE_WORD_WEIGHT;
+}
+
+bool isInLibrary(String term) {
+  return CODENAMES_LIBRARY.indexOf(term) > -1;
+}
+
+TermConfidence libraryBestMatch(String term) {
+  return mapReduce<String, TermConfidence>(CODENAMES_LIBRARY,
+      (TermConfidence highestTerm, String libTerm) {
+        double confidence = matchConfidence(term, libTerm);
+        return highestTerm == null || highestTerm.confidence < confidence
+          ? new TermConfidence(confidence: confidence, term: libTerm)
+          : highestTerm;
+      });
+}
+
+
+double matchConfidence (String term1, String term2) {
+  return 1 - new JaroWinkler().normalizedDistance(term1, term2);
+}
