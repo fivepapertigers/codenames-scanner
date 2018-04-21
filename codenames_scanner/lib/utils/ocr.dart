@@ -143,7 +143,6 @@ Future<OcrDocument> runOcr (String imagePath, String lang) async {
 Future<bool> checkTrainedData (String lang) async {
   try {
     bool exists = await PROVIDER.invokeMethod(CHECK_TRAINED_DATA, lang);
-    print(exists);
     return exists;
   } on PlatformException catch(err) {
     print('checkTrainedData error: ${err.toString()}');
