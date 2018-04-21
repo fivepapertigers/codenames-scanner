@@ -21,8 +21,8 @@ class ImageModel {
 
 class TermResult {
   final String term;
-  final int confidence;
-  TermResult(this.term, this.confidence);
+  final double confidence;
+  TermResult({this.term, this.confidence});
 }
 
 enum CardTypes {
@@ -131,13 +131,13 @@ class Corners {
 }
 
 class BoardCard {
-  final int type;
+  final CardTypes type;
   final TermResult termResult;
   final bool covered;
   final ImageModel image;
   final Corners coordinates;
 
-  BoardCard({this.termResult, this.type, this.covered, this.image, this.coordinates});
+  BoardCard({this.termResult, this.type, this.covered=false, this.image, this.coordinates});
 
   update(BoardCard newCard) {
     return new BoardCard(

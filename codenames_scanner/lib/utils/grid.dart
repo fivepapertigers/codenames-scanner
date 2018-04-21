@@ -1,8 +1,16 @@
-import 'package:codenames_scanner/models.dart' show Corners, ImageModel;
+import 'package:codenames_scanner/models.dart' show Corners, ImageModel, BoardCard;
 import 'package:flutter/material.dart' show Offset;
 import 'package:codenames_scanner/utils/util.dart';
 
 export 'package:flutter/material.dart' show Offset;
+
+class CardWithPosition {
+  final int row;
+  final int col;
+  final BoardCard card;
+
+  CardWithPosition(this.row, this.col, this.card);
+}
 
 List<Offset> getMidPoints(Offset start, Offset end) {
 
@@ -64,3 +72,10 @@ Corners defaultCornersFromImage(ImageModel image) {
       new Offset(left, bottom), new Offset(right, bottom)
   );
 }
+
+List<CardWithPosition> cardsList(List<List<BoardCard>> board) =>
+  mapReduceWithIdx(board, (List<CardWithPosition> result, List<BoardCard> rowCards, int row) =>
+    result..addAll(
+      mapWithIndex(rowCards, (BoardCard card, int col) => new CardWithPosition(row, col, card))
+    ),
+    initial: new List<CardWithPosition>());

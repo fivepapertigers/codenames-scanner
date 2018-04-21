@@ -2,11 +2,12 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:codenames_scanner/utils/ocr.dart';
 import 'package:codenames_scanner/utils/term.dart';
+import 'package:codenames_scanner/models.dart';
 
 void main() {
 
   test('gets ocr words from html result', () {
-    String html = _getHocrHtml();
+    String html = _getHOCRHtml();
     OcrDocument ocrDoc = OcrDocument.fromHtmlString(html);
     expect(ocrDoc.words[0].text, 'ESXVCLUEIGNH');
     expect(ocrDoc.words[0].confidence, 57);
@@ -18,18 +19,18 @@ void main() {
 
 
   test('gets library term', () {
-    String html = _getHocrHtml();
+    String html = _getHOCRHtml();
     OcrDocument ocrDoc = OcrDocument.fromHtmlString(html);
     var lines = ocrDoc.lines.map(
       (line) => line.words.map((word) => word.text).toList()
     ).toList();
-    TermConfidence result = findTermFromLinesOfText(lines);
+    TermResult result = findTermFromLinesOfText(lines);
     expect(result.term, 'UNDERTAKER');
     expect(result.confidence, 1.0);
   });
 }
 
-String _getHocrHtml() {
+String _getHOCRHtml() {
   File f = new File(Directory.current.path + '/assets/sample.html.hocr');
   return f.readAsStringSync();
 }

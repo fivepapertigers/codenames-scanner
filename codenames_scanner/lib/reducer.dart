@@ -108,10 +108,13 @@ TransientAppState transientReducer(TransientAppState state, action) {
     )(state);
   } else if (action is ToggleCardCovered) {
     return updateCard(
-      action.row, action.col, (card) => card.update(new BoardCard(covered: card.covered))
+      action.row, action.col, (card) => card.update(
+        new BoardCard(covered: card.covered == true ? false : true))
     )(state);
   } else if (action is AddBoardImage) {
     return state..boardImage = action.image;
+  } else if (action is RemoveBoardImage) {
+    return state..boardImage = null;
   } else if (action is DesignateCards) {
 
     var rand = new Random();

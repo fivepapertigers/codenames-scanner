@@ -1,6 +1,7 @@
 
 import 'package:codenames_scanner/utils/util.dart';
 import 'package:edit_distance/edit_distance.dart';
+import 'package:codenames_scanner/models.dart';
 
 
 const CODENAMES_LIBRARY = [
@@ -58,7 +59,6 @@ const CODENAMES_LIBRARY = [
   "WHIP", "WIND", "WITCH", "WORM", "YARD"
 ];
 
-const ONLY_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const LIBRARY_MATCH_WEIGHT = 20.0;
 const SINGLE_WORD_WEIGHT = 5.0;
 const LIBRARY_DISTANCE_WEIGHT = 8.0;
@@ -66,28 +66,22 @@ RegExp validTermRe = new RegExp(r'^[A-Z]{2,}(\s[A-Z]{2,})?$');
 RegExp multiWordRe = new RegExp(r'\s');
 
 
-class TermConfidence {
-  final double confidence;
-  final String term;
-  TermConfidence({this.confidence, this.term});
-}
 
-
-TermConfidence findTermFromLinesOfText(List<List<String>> textLines) {
-  TermConfidence termConfidence = validTermsFromTextLines(textLines)
+TermResult findTermFromLinesOfText(List<List<String>> textLines) {
+  List<TermResult> termResults = validTermsFromTextLines(textLines)
     .map((String term) =>
-      new TermConfidence(
+      new TermResult(
         term: term, confidence: weighTerm(term)
       )
-    )
-    .reduce((best, next) => best.confidence > next.confidence ? best : next);
+    ).toList();
 
-  if (termConfidence == null) {
-    return new TermConfidence();
+  if (termResults.length == 0) {
+    return new TermResult(confidence: 0.0);
   }
+  TermResult termResult = termResults
+      .reduce((best, next) => best.confidence > next.confidence ? best : next);
 
-  return libraryBestMatch(termConfidence.term);
-
+  return libraryBestMatch(termResult.term);
 }
 
 List<String> validTermsFromTextLines(List<List<String>> textLines) {
@@ -101,7 +95,8 @@ List<String> breakLineIntoTerms(List<String> line) {
     (List<String> resultCollection, String word, int idxA) =>
       new List<String>.from(resultCollection)
       ..add(word)
-      ..addAll(mapReduceWithIdx<String, List<List<String>>>(
+      ..addAll(
+        mapReduceWithIdx<String, List<List<String>>>(
           line.getRange(idxA, line.length).toList(),
           (combinedCollections, innerWord, idxB) {
             List<String> noSpaceColl = combinedCollections[0];
@@ -147,12 +142,12 @@ bool isInLibrary(String term) {
   return CODENAMES_LIBRARY.indexOf(term) > -1;
 }
 
-TermConfidence libraryBestMatch(String term) {
-  return mapReduce<String, TermConfidence>(CODENAMES_LIBRARY,
-      (TermConfidence highestTerm, String libTerm) {
+TermResult libraryBestMatch(String term) {
+  return mapReduce<String, TermResult>(CODENAMES_LIBRARY,
+      (TermResult highestTerm, String libTerm) {
         double confidence = matchConfidence(term, libTerm);
         return highestTerm == null || highestTerm.confidence < confidence
-          ? new TermConfidence(confidence: confidence, term: libTerm)
+          ? new TermResult(confidence: confidence, term: libTerm)
           : highestTerm;
       });
 }

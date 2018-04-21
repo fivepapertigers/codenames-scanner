@@ -15,6 +15,7 @@ import io.flutter.plugin.common.MethodChannel.Result;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 public class MainActivity extends FlutterActivity {
 
@@ -48,18 +49,19 @@ public class MainActivity extends FlutterActivity {
           if (methodCall.method.equals(RUN_OCR)) {
             String lang = methodCall.argument("lang");
             String imgPath = methodCall.argument("imgPath");
-            runOcr(lang, imgPath, result);
+            Map<String, String> config = methodCall.argument("config");
+            runOcr(lang, imgPath, config, result);
           }
         }
       }
     );
   }
 
-  private void runOcr(String lang, String imgPath, Result result) {
+  private void runOcr(String lang, String imgPath, Map<String, String> config, Result result) {
     try {
       tessdataDir();
       new RunOCR().execute(
-        new RunOCR.RunOCRInput(lang, trainedDataDir().getAbsolutePath(), imgPath, result)
+        new RunOCR.RunOCRInput(lang, trainedDataDir().getAbsolutePath(), imgPath, config, result)
       );
     } catch (IOException err) {
       result.error(err.getMessage(), err.getStackTrace().toString(), null);

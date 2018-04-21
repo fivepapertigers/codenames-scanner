@@ -1,35 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:codenames_scanner/models.dart';
+import 'package:codenames_scanner/components/grid_card.dart';
+import 'package:codenames_scanner/utils/grid.dart';
 
 class GridComponent extends StatelessWidget {
 
   final List<List<BoardCard>> board;
+  final Function(int, int) onCardPress;
 
-  GridComponent({key, this.board});
+  GridComponent({key, this.board, this.onCardPress});
 
   @override
   Widget build(BuildContext context) {
     return new Center(
-      child: new Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: board.map((List<BoardCard> cards) =>
-          new Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: cards.map((BoardCard card) =>
-              new Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [card.image == null
-                    ? new Text('No image for card')
-                    : new SizedBox(
-                  width: 130.0,
-                  height: 50.0,
-                  child: new Image.file(card.image.file),
-                )],
-              )
-            ).toList(),
+      child: new GridView.count(
+        childAspectRatio: 2.0,
+        crossAxisCount: 5,
+        children: cardsList(board).map(
+          (cardWithPosition) => new GridCard(
+            card: cardWithPosition.card,
+            row: cardWithPosition.row,
+            col: cardWithPosition.col,
+            onCardPress: () => onCardPress(cardWithPosition.row, cardWithPosition.col)
           )
         ).toList()
       )

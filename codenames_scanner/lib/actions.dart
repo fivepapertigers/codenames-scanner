@@ -7,6 +7,7 @@ import 'package:codenames_scanner/utils/grid.dart';
 import 'dart:async';
 import 'package:camera/camera.dart';
 import 'package:codenames_scanner/utils/ocr.dart';
+import 'package:codenames_scanner/utils/term.dart';
 
 class ClearBoard {}
 
@@ -14,6 +15,8 @@ class AddBoardImage {
   final ImageModel image;
   AddBoardImage(this.image);
 }
+
+class RemoveBoardImage {}
 
 class AddImageToCard {
   final int row;
@@ -77,6 +80,7 @@ class UpdateCurrentLanguageStatus {
   UpdateCurrentLanguageStatus(this.status);
 }
 
+
 Future<void> processBoardImage (Store<AppState> store) async {
   List<List<Corners>> coordinates = getCardCoordinates(store.state.gridCorners);
   await Future.wait(mapReduce<List<Future<void>>, List<Future<void>>>(
@@ -95,7 +99,15 @@ Future<void> processCard (Store<AppState> store, int row, int col, Corners coord
   store.dispatch(new AddCoordinatesToCard(row, col, coordinates));
   ImageModel cardImage = await cropFromCoordinates(boardImage, coordinates);
   store.dispatch(new AddImageToCard(row, col, cardImage));
-  print(await runOcr(cardImage.file.path, store.state.currentLanguage));
+//  Run OCR
+  OcrDocument ocrResult = await runOcr(cardImage.file.path, store.state.currentLanguage);
+//  Find term and confidence
+  List<List<String>> textLines = ocrResult.lines.map(
+    (line) => line.words.map((word) => word.text).toList()
+  ).toList();
+  TermResult termResult = findTermFromLinesOfText(textLines);
+  store.dispatch(new AddTermToCard(row, col, termResult));
+
 }
 
 
