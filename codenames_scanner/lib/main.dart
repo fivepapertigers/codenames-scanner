@@ -1,17 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:redux/redux.dart';
 import 'package:camera/camera.dart';
-import 'package:codenames_scanner/reducer.dart';
-import 'package:flutter_redux/flutter_redux.dart';
-import 'package:redux_thunk/redux_thunk.dart';
 import 'package:codenames_scanner/routes.dart';
-import 'package:codenames_scanner/actions.dart';
 import 'package:codenames_scanner/models.dart';
+import 'package:codenames_scanner/state/state.dart';
 
-Store<AppState> store = new Store<AppState>(
-    appReducer, initialState: initialState, middleware: [thunkMiddleware]
-);
 
 Future<Null > main() async {
 

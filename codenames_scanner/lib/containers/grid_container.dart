@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:codenames_scanner/models.dart';
-import 'package:redux/redux.dart';
-import 'package:flutter_redux/flutter_redux.dart';
 import 'package:codenames_scanner/components/grid.dart';
-import 'package:codenames_scanner/reducer.dart';
-import 'package:codenames_scanner/actions.dart';
+import 'package:codenames_scanner/state/state.dart';
 
 class GridContainer extends StatelessWidget {
 

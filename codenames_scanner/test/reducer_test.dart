@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:codenames_scanner/reducer.dart';
+import 'package:codenames_scanner/state/_reducer.dart';
+import 'package:codenames_scanner/state/_state_model.dart';
 import 'package:codenames_scanner/models.dart';
 import 'package:codenames_scanner/utils/util.dart';
 
