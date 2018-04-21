@@ -79,3 +79,5 @@ List<CardWithPosition> cardsList(List<List<BoardCard>> board) =>
       mapWithIndex(rowCards, (BoardCard card, int col) => new CardWithPosition(row, col, card))
     ),
     initial: new List<CardWithPosition>());
+
+

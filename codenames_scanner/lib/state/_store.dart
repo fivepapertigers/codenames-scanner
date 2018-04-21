@@ -1,5 +1,6 @@
 import 'package:redux/redux.dart';
 import 'package:redux_thunk/redux_thunk.dart';
+
 import 'package:codenames_scanner/state/_reducer.dart';
 import 'package:codenames_scanner/state/_state_model.dart';
 
