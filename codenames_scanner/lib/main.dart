@@ -5,11 +5,9 @@ import 'package:codenames_scanner/routes.dart';
 import 'package:codenames_scanner/models.dart';
 import 'package:codenames_scanner/state/state.dart';
 
-
 Future<Null > main() async {
-
+  await loadDevData(store);
   await setCurrentLanguage(store, LANG_ENG);
-
   runApp(
     new StoreProvider<AppState>(
       store: store,

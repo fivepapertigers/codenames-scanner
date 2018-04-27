@@ -1,6 +1,7 @@
 import 'package:codenames_scanner/models.dart';
 import 'package:codenames_scanner/utils/grid.dart';
 import 'package:camera/camera.dart';
+import 'package:codenames_scanner/state/_state_model.dart';
 
 class ClearBoard {}
 
@@ -71,4 +72,15 @@ class SetCurrentLanguage {
 class UpdateCurrentLanguageStatus {
   final LoadingStatus status;
   UpdateCurrentLanguageStatus(this.status);
+}
+
+class SetEditCard {
+  final int row;
+  final int col;
+  SetEditCard(this.row, this.col);
+}
+
+class LoadDevState {
+  final AppState state;
+  LoadDevState(this.state);
 }

@@ -5,6 +5,7 @@ class BasePage extends StatelessWidget {
   final Widget child;
   final Widget button;
   final bool showHeader;
+  final bool scrollable;
   final buttonCallback;
 
   BasePage({
@@ -12,6 +13,7 @@ class BasePage extends StatelessWidget {
     this.showHeader = true,
     this.button,
     this.buttonCallback,
+    this.scrollable = false
   });
 
   @override
@@ -42,7 +44,12 @@ class BasePage extends StatelessWidget {
         child: button,
         onPressed: buttonCallback
       ),
-      body: child
+      body: scrollable
+        ? new SingleChildScrollView(
+          child: child,
+          scrollDirection: Axis.vertical,
+        )
+        : child
     );
   }
 

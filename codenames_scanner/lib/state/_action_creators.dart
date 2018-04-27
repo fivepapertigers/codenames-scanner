@@ -9,9 +9,12 @@ import 'package:codenames_scanner/utils/term.dart';
 import 'package:codenames_scanner/state/_action_types.dart';
 import 'package:codenames_scanner/state/_store.dart';
 import 'package:codenames_scanner/state/_state_model.dart';
+import 'package:codenames_scanner/seed_data.dart';
 
 
 Future<void> processBoardImage (Store<AppState> store) async {
+  store.dispatch(new ClearBoard());
+  store.dispatch(new DesignateCards());
   List<List<Corners>> coordinates = getCardCoordinates(store.state.gridCorners);
   await Future.wait(
     mapReduce<List<Future<void>>, List<Future<void>>>(
@@ -59,6 +62,7 @@ Future<void> activateCamera(Store<AppState> store) async {
 
 
 Future<void> captureImage(Store<AppState> store) async {
+  store.dispatch(new RemoveBoardImage());
   ImageModel image = await captureImageFromCamera(store.state.cameraController);
   store.dispatch(new UpdateGridCorner(
     Corner.TOP_LEFT, new Offset(image.width * 0.1, image.height * 0.1)
@@ -101,4 +105,22 @@ Future<void> loadCurrentLanguage(Store<AppState> store) async {
   store.dispatch(new UpdateCurrentLanguageStatus(
     res ? LoadingStatus.Complete : LoadingStatus.Failed
   ));
+}
+
+Future<void> loadDevData (Store<AppState> store) async {
+  store.dispatch(
+    new LoadDevState(
+      new AppState(
+        board: await generateFakeBoard(),
+        gridCorners: new Corners(
+          new Offset(50.0, 50.0), new Offset(200.0, 50.0),
+          new Offset(50.0, 200.0), new Offset(200.0, 200.0)
+        ),
+        cameras: [],
+        boardImage: await loadAssetImage('assets/fake-image.jpg'),
+        currentLanguageStatus: LoadingStatus.Unstarted,
+      )
+    )
+  );
+  store.dispatch(new DesignateCards());
 }

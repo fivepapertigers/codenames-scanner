@@ -33,8 +33,9 @@ class GridCard extends StatelessWidget {
   final int col;
   final BoardCard card;
   final Function onCardPress;
+  final Function onLongPress;
 
-  GridCard({this.card, this.row, this.col, this.onCardPress});
+  GridCard({this.card, this.row, this.col, this.onCardPress, this.onLongPress});
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +43,7 @@ class GridCard extends StatelessWidget {
 
     return new GestureDetector(
       onTap: onCardPress,
+      onLongPress: onLongPress,
       child: new GridTile(
         child: new Card(
           color: cardColors.background,

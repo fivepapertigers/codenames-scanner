@@ -39,20 +39,12 @@ List<R> flatten<R>(List<List<R>>listOfLists) => mapReduce<List<R>, List<R>>(
 
 
 
-List<BoardCard> generateNewBoardRow() {
-  return [
-    new BoardCard(), new BoardCard(), new BoardCard(), new BoardCard(), new BoardCard()
-  ];
+List<BoardCard> generateNewBoardRow({BoardCard Function() generator}) {
+  return List.generate(5, (int _) => generator == null ? new BoardCard() : generator());
 }
 
-List<List<BoardCard>> generateNewBoard() {
-  return [
-    generateNewBoardRow(),
-    generateNewBoardRow(),
-    generateNewBoardRow(),
-    generateNewBoardRow(),
-    generateNewBoardRow(),
-  ];
+List<List<BoardCard>> generateNewBoard({BoardCard Function() generator}) {
+  return List.generate(5, (int idx) => generateNewBoardRow(generator: generator));
 }
 
 List<R> flattenMap<T, R>(List<T> list, List<R> Function(T) getSubList) {

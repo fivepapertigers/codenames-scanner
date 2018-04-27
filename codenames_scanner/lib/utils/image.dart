@@ -1,7 +1,9 @@
 import 'package:image/image.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:codenames_scanner/models.dart';
 import 'dart:io';
 import 'dart:async';
+import 'dart:typed_data';
 import 'package:uuid/uuid.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:camera/camera.dart';
@@ -16,19 +18,24 @@ Future<ImageModel> cropFromCoordinates (ImageModel original, Corners coordinates
     coordinates.width.round(),
     coordinates.height.round()
   );
-  String path = await _tempPath();
-  File file = await storeImage(image, path);
-  return new ImageModel(path, file: file, image: image);
+  File file = await storeImage(image);
+  return new ImageModel(file.path, file: file, image: image);
 
 }
 
-Future<File> storeImage (Image image, String path) async {
+Future<File> storeImage (Image image) async {
   String path = await _tempPath();
   File file = new File(path);
   await file.writeAsBytes(encodeJpg(image, quality: 100));
   return file;
 }
 
+Future<ImageModel> loadAssetImage(String path) async {
+  ByteData bytes = await rootBundle.load(path);
+  Image image = decodeImage(bytes.buffer.asUint8List());
+  File file = await storeImage(image);
+  return new ImageModel(file.path, file: file, image: image);
+}
 
 Future<ImageModel> captureImageFromCamera (CameraController controller) async {
   String path = await _tempPath();

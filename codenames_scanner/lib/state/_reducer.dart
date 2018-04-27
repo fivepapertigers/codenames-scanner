@@ -38,7 +38,7 @@ TransientAppState transientReducer(TransientAppState state, action) {
     var rand = new Random();
     var extraIsBlue = rand.nextBool();
 
-    var list = new List(25);
+    var list = new List<CardTypes>();
     list.add(CardTypes.Assassin);
     for (var i = 0; i < 9; i ++) {
       if (i < 8 || extraIsBlue) {
@@ -73,6 +73,11 @@ TransientAppState transientReducer(TransientAppState state, action) {
     return state
       ..currentLanguage = action.lang
       ..currentLanguageStatus = LoadingStatus.Unstarted;
+  } else if (action is SetEditCard) {
+    return state
+      ..editCardLocation = [action.row, action.col];
+  } else if (action is LoadDevState) {
+    return TransientAppState.fromAppState(action.state);
   }
 
   return state;

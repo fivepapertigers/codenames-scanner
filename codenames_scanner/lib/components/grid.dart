@@ -7,8 +7,9 @@ class GridComponent extends StatelessWidget {
 
   final List<List<BoardCard>> board;
   final Function(int, int) onCardPress;
+  final Function(int, int) onEditCard;
 
-  GridComponent({key, this.board, this.onCardPress});
+  GridComponent({key, this.board, this.onCardPress, this.onEditCard});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,10 @@ class GridComponent extends StatelessWidget {
             card: cardWithPosition.card,
             row: cardWithPosition.row,
             col: cardWithPosition.col,
-            onCardPress: () => onCardPress(cardWithPosition.row, cardWithPosition.col)
+            onCardPress: () =>
+              onCardPress(cardWithPosition.row, cardWithPosition.col),
+            onLongPress: () =>
+              onEditCard(cardWithPosition.row, cardWithPosition.col)
           )
         ).toList()
       )

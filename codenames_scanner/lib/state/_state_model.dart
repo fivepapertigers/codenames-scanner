@@ -1,8 +1,21 @@
 import 'package:codenames_scanner/models.dart';
-import 'package:meta/meta.dart';
 import 'package:codenames_scanner/utils/util.dart';
 import 'package:codenames_scanner/utils/grid.dart';
 import 'package:camera/camera.dart';
+
+const TOTAL_CARDS = 25;
+
+
+AppState initialState = new AppState(
+  board: generateNewBoard(),
+  gridCorners: new Corners(
+      new Offset(50.0, 50.0), new Offset(200.0, 50.0),
+      new Offset(50.0, 200.0), new Offset(200.0, 200.0)
+  ),
+  cameras: [],
+  currentLanguageStatus: LoadingStatus.Unstarted,
+);
+
 
 class TransientAppState {
   List<List<BoardCard>> board;
@@ -12,6 +25,7 @@ class TransientAppState {
   CameraController cameraController;
   LoadingStatus currentLanguageStatus;
   String currentLanguage;
+  List<int> editCardLocation;
 
 
   static TransientAppState fromAppState(AppState state) {
@@ -23,6 +37,7 @@ class TransientAppState {
       ..cameraController = state.cameraController
       ..currentLanguageStatus = state.currentLanguageStatus
       ..currentLanguage = state.currentLanguage
+      ..editCardLocation = state.editCardLocation
     ;
   }
 
@@ -38,7 +53,6 @@ class TransientAppState {
 }
 
 
-@immutable
 class AppState {
   final List<List<BoardCard>> board;
   final ImageModel boardImage;
@@ -47,11 +61,14 @@ class AppState {
   final CameraController cameraController;
   final LoadingStatus currentLanguageStatus;
   final String currentLanguage;
+  final List<int> editCardLocation;
+  List<BoardCard> _flattenedBoardCache;
+  Map<LoadingStatus, int> _boardStatusMapCache;
 
   AppState({
     this.board, this.boardImage, this.gridCorners,
     this.cameras, this.cameraController, this.currentLanguageStatus,
-    this.currentLanguage
+    this.currentLanguage, this.editCardLocation
   });
 
 
@@ -64,6 +81,7 @@ class AppState {
         cameraController: state.cameraController,
         currentLanguageStatus: state.currentLanguageStatus,
         currentLanguage: state.currentLanguage,
+        editCardLocation: state.editCardLocation
       );
 
 
@@ -72,14 +90,48 @@ class AppState {
         'gridCorners: $gridCorners / cameras: $cameras / ' +
         'cameraController: $cameraController>');
   }
-}
 
-AppState initialState = new AppState(
-  board: generateNewBoard(),
-  gridCorners: new Corners(
-    new Offset(50.0, 50.0), new Offset(200.0, 50.0),
-    new Offset(50.0, 200.0), new Offset(200.0, 200.0)
-  ),
-  cameras: [],
-  currentLanguageStatus: LoadingStatus.Unstarted,
-);
+  LoadingStatus get boardProcessingStatus {
+    print(_boardStatusMap);
+    if (_boardStatusMap[LoadingStatus.Complete] >= TOTAL_CARDS) {
+      return LoadingStatus.Complete;
+    } else if (_boardStatusMap[LoadingStatus.Unstarted] == 0) {
+      return LoadingStatus.Started;
+    }
+    return LoadingStatus.Unstarted;
+  }
+
+  BoardCard get editCard => editCardLocation == null
+    ? null
+    : board[editCardLocation[0]][editCardLocation[1]];
+
+  double get boardProcessingPercentage =>
+    _boardStatusMap[LoadingStatus.Complete] / TOTAL_CARDS;
+
+  Map<LoadingStatus, int> get _boardStatusMap =>
+    _boardStatusMapCache == null
+    ? mapReduce(
+      _flattenedBoard,
+        (Map<LoadingStatus, int> _statusMap, BoardCard card) =>
+      _statusMap..update(_cardStatus(card), (int count) => count + 1),
+      initial: {
+        LoadingStatus.Complete: 0,
+        LoadingStatus.Unstarted: 0,
+        LoadingStatus.Started: 0
+      }
+    )
+    : _boardStatusMapCache;
+
+  List<BoardCard> get _flattenedBoard =>
+    _flattenedBoardCache == null ? flatten(board) : _flattenedBoardCache;
+
+  LoadingStatus _cardStatus (BoardCard card) {
+    if (card.image == null) {
+      return LoadingStatus.Unstarted;
+    } else if (card.termResult == null) {
+      return LoadingStatus.Started;
+    } else {
+      return LoadingStatus.Complete;
+    }
+  }
+}

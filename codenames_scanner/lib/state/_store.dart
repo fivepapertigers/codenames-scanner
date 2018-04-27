@@ -7,6 +7,6 @@ import 'package:codenames_scanner/state/_state_model.dart';
 export 'package:redux/redux.dart' show Store;
 
 
-Store<AppState> store = new Store<AppState>(
+final Store<AppState> store = new Store<AppState>(
     appReducer, initialState: initialState, middleware: [thunkMiddleware]
 );

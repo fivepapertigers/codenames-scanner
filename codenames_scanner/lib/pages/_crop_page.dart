@@ -19,12 +19,12 @@ class CropPage extends StatelessWidget {
             routes.navigate(RouteNames.Grid, context);
           },
           child: vm.boardImage == null
-            ? new Center(child: new Text('Loading...'))
+            ? new Center(child: new Text('Hang tight, preparing your image...'))
             : new CropComponent(
-            boardImage: vm.boardImage,
-            cornerUpdated: vm.cornerUpdated,
-            gridCorners: vm.gridCorners
-          ),
+              boardImage: vm.boardImage,
+              cornerUpdated: vm.cornerUpdated,
+              gridCorners: vm.gridCorners
+            ),
         )
     );
   }
