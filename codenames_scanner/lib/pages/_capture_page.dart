@@ -10,6 +10,11 @@ class CapturePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return new CaptureContainer(
       (BuildContext context, CaptureViewModel vm) {
+        if (vm.camera == null) {
+          return new BasePage(
+            child: new IconButton(icon: new Icon(Icons.photo), onPressed: () => routes.navigate(RouteNames.Crop, context))
+          );
+        }
         if (vm.controller == null) {
           vm.loadCamera();
         }

@@ -37,6 +37,10 @@ class BasePage extends StatelessWidget {
           new IconButton(
               icon: new Icon(Icons.refresh),
               onPressed: () => routes.navigate(RouteNames.Reset, context)
+          ),
+          new IconButton(
+              icon: new Icon(Icons.help),
+              onPressed: () => routes.navigate(RouteNames.Help, context)
           )
         ],
       ) : null,

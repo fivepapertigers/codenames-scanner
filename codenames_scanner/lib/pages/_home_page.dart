@@ -41,7 +41,7 @@ class HomePage extends StatelessWidget {
                   new Icon(Icons.camera),
                   new Text(' icon to scan your board and begin playing.')
                 ],
-              )
+              ),
             ]
           );
         }

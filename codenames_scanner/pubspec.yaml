@@ -20,6 +20,7 @@ dependencies:
   redux_thunk: ^0.2.0
   html: any
   edit_distance: ^0.3.0
+  flutter_list_drag_and_drop: ^0.1.1
 
 dev_dependencies:
   flutter_test:

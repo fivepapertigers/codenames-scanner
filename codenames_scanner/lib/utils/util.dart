@@ -15,6 +15,7 @@ List<int> count(int num, [int base = 0]) {
 
 R mapReduce<T, R>(List<T>list, R Function(R combined, T item) reducer, {R initial}) {
   R result = initial;
+  list = list == null ? new List<T>() : list;
   list.forEach((T item) {
     result = reducer(result, item);
   });
@@ -24,6 +25,7 @@ R mapReduce<T, R>(List<T>list, R Function(R combined, T item) reducer, {R initia
 R mapReduceWithIdx<T, R>(List<T>list, R Function(R combined, T item, int idx) reducer, {R initial}) {
   R result = initial;
   int idx = 0;
+  list = list == null ? new List<T>() : list;
   list.forEach((T item) {
     result = reducer(result, item, idx);
     idx += 1;

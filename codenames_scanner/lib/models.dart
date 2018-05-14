@@ -25,6 +25,7 @@ class TermResult {
   TermResult({this.term, this.confidence});
 }
 
+
 enum CardTypes {
   Blue, Red, Bystander, Assassin
 }
@@ -158,4 +159,19 @@ Map<String, String> languages = {
 
 enum LoadingStatus {
   Unstarted, Started, Failed, Complete
+}
+
+class CardPosition {
+  final int row;
+  final int col;
+
+  CardPosition({this.row, this.col});
+}
+
+class CardWithPosition extends CardPosition {
+  final int row;
+  final int col;
+  final BoardCard card;
+
+  CardWithPosition(this.row, this.col, this.card);
 }

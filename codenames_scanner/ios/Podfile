@@ -27,6 +27,11 @@ def parse_KV_file(file, separator='=')
 end
 
 target 'Runner' do
+  use_frameworks!
+
+  pod 'TesseractOCRiOS', '4.0.0'
+  pod 'Alamofire', '~> 4.7'
+
   # Prepare symlinks folder. We use symlinks to avoid having Podfile.lock
   # referring to absolute paths on developers' machines.
   system('rm -rf Pods/.symlinks')
@@ -55,10 +60,19 @@ target 'Runner' do
   }
 end
 
+pre_install do |installer|
+  # workaround for https://github.com/CocoaPods/CocoaPods/issues/3289
+  Pod::Installer::Xcode::TargetValidator.send(:define_method, :verify_no_static_framework_transitive_dependencies) {}
+end
+
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
       config.build_settings['ENABLE_BITCODE'] = 'NO'
+    end
+    # workaround for https://github.com/CocoaPods/CocoaPods/issues/7463
+    target.headers_build_phase.files.each do |file|
+      file.settings = { 'ATTRIBUTES' => ['Public'] }
     end
   end
 end

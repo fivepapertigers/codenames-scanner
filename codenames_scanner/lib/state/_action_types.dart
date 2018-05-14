@@ -84,3 +84,9 @@ class LoadDevState {
   final AppState state;
   LoadDevState(this.state);
 }
+
+class ReorderCards {
+  final CardTypes cardType;
+  final List<CardPosition> positions;
+  ReorderCards(this.cardType, this.positions);
+}

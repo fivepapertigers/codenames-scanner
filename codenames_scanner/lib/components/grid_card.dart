@@ -5,21 +5,22 @@ class CardColors {
   Color _background;
   Color _font;
 
-  CardColors.fromCardType(CardTypes cardType) {
-    _font = Colors.black;
+  CardColors.fromCardType(CardTypes cardType, bool covered) {
+    double opacity = covered ? 0.4 : 1.0;
+    _font = Color.fromRGBO(0, 0, 0, opacity);
     switch (cardType) {
       case CardTypes.Blue:
-        _background = Color.fromRGBO(179, 178, 197, 1.0);
+        _background = Color.fromRGBO(179, 178, 197, opacity);
         break;
       case CardTypes.Red:
-        _background = Color.fromRGBO(230, 179, 179, 1.0);
+        _background = Color.fromRGBO(230, 179, 179, opacity);
         break;
       case CardTypes.Assassin:
-        _background = Colors.black;
-        _font = Colors.white;
+        _background = Color.fromRGBO(0, 0, 0, opacity);
+        _font = Color.fromRGBO(255, 255, 255, opacity);
         break;
       default:
-        _background = Color.fromRGBO(196, 196, 196, 1.0);
+        _background = Color.fromRGBO(196, 196, 196, opacity);
     }
   }
 
@@ -34,16 +35,18 @@ class GridCard extends StatelessWidget {
   final BoardCard card;
   final Function onCardPress;
   final Function onLongPress;
+  final Function onDoubleTap;
 
-  GridCard({this.card, this.row, this.col, this.onCardPress, this.onLongPress});
+  GridCard({this.card, this.row, this.col, this.onCardPress, this.onLongPress,
+            this.onDoubleTap});
 
   @override
   Widget build(BuildContext context) {
-    CardColors cardColors = new CardColors.fromCardType(card.type);
-
+    CardColors cardColors = new CardColors.fromCardType(card.type, card.covered);
     return new GestureDetector(
       onTap: onCardPress,
       onLongPress: onLongPress,
+      onDoubleTap: onDoubleTap,
       child: new GridTile(
         child: new Card(
           color: cardColors.background,

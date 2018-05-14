@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:codenames_scanner/pages/pages.dart';
 
 enum RouteNames {
-  Home, Capture, Crop, Grid, List, Reset, EditCard
+  Home, Capture, Crop, Grid, List, Reset, EditCard, Help
 }
 
 typedef _RouteBuilder = Widget Function(BuildContext);
@@ -35,6 +35,6 @@ _Routes routes = new _Routes()
   ..register(RouteNames.Crop, '/crop', (BuildContext context) => new CropPage())
   ..register(RouteNames.Grid, '/grid', (BuildContext context) => new GridPage())
   ..register(RouteNames.EditCard, '/edit-card', (BuildContext context) => new EditCardPage())
-//  ..register(RouteNames.List, '/list', (BuildContext context) => new ListPage())
-//  ..register(RouteNames.Reset, '/reset', (BuildContext context) => new ResetPage())
+  ..register(RouteNames.List, '/list', (BuildContext context) => new ListPage())
+  ..register(RouteNames.Help, '/help', (BuildContext context) => new HelpPage())
 ;

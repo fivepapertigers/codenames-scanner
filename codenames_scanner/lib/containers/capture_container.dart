@@ -27,10 +27,11 @@ class CaptureViewModel {
   final CameraController controller;
   final Function unloadCamera;
   final Function loadCamera;
+  final CameraDescription camera;
 
   CaptureViewModel({
     this.boardImage, this.imageCaptured, this.controller,
-    this.unloadCamera, this.loadCamera
+    this.unloadCamera, this.loadCamera, this.camera
   });
 
   static CaptureViewModel fromStore(Store<AppState> store) {
@@ -39,7 +40,8 @@ class CaptureViewModel {
       imageCaptured: () => captureImage(store),
       controller: store.state.cameraController,
       unloadCamera: () => deactivateCamera(store),
-      loadCamera: () => activateCamera(store)
+      loadCamera: () => activateCamera(store),
+      camera: store.state.cameras.length > 0 ? store.state.cameras.first : null
     );
   }
 

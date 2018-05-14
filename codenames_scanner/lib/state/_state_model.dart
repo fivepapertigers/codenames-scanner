@@ -26,6 +26,7 @@ class TransientAppState {
   LoadingStatus currentLanguageStatus;
   String currentLanguage;
   List<int> editCardLocation;
+  Map<CardTypes, List<CardPosition>> cardListOrder;
 
 
   static TransientAppState fromAppState(AppState state) {
@@ -38,6 +39,12 @@ class TransientAppState {
       ..currentLanguageStatus = state.currentLanguageStatus
       ..currentLanguage = state.currentLanguage
       ..editCardLocation = state.editCardLocation
+//      Deep copy cardListOrder
+      ..cardListOrder = state.cardListOrder == null ? null : new Map.fromEntries(
+        state.cardListOrder.entries.map(
+          (entry) => new MapEntry(entry.key, new List.from(entry.value))
+        )
+      )
     ;
   }
 
@@ -62,13 +69,14 @@ class AppState {
   final LoadingStatus currentLanguageStatus;
   final String currentLanguage;
   final List<int> editCardLocation;
+  final Map<CardTypes, List<CardPosition>> cardListOrder;
   List<BoardCard> _flattenedBoardCache;
   Map<LoadingStatus, int> _boardStatusMapCache;
 
   AppState({
     this.board, this.boardImage, this.gridCorners,
     this.cameras, this.cameraController, this.currentLanguageStatus,
-    this.currentLanguage, this.editCardLocation
+    this.currentLanguage, this.editCardLocation, this.cardListOrder
   });
 
 
@@ -81,7 +89,8 @@ class AppState {
         cameraController: state.cameraController,
         currentLanguageStatus: state.currentLanguageStatus,
         currentLanguage: state.currentLanguage,
-        editCardLocation: state.editCardLocation
+        editCardLocation: state.editCardLocation,
+        cardListOrder: state.cardListOrder,
       );
 
 
@@ -92,7 +101,6 @@ class AppState {
   }
 
   LoadingStatus get boardProcessingStatus {
-    print(_boardStatusMap);
     if (_boardStatusMap[LoadingStatus.Complete] >= TOTAL_CARDS) {
       return LoadingStatus.Complete;
     } else if (_boardStatusMap[LoadingStatus.Unstarted] == 0) {
@@ -107,6 +115,18 @@ class AppState {
 
   double get boardProcessingPercentage =>
     _boardStatusMap[LoadingStatus.Complete] / TOTAL_CARDS;
+
+  List<CardWithPosition> orderedCards (CardTypes cardType) {
+    return cardListOrder != null && cardListOrder.containsKey(cardType)
+      ? cardListOrder[cardType]
+      .map<CardWithPosition>((cardPos) =>
+    new CardWithPosition(
+      cardPos.row, cardPos.col, board[cardPos.row][cardPos.col]
+    )
+    )
+      .toList()
+      : filteredCardsList(board, (cardWPos) => cardWPos.card.type == cardType);
+  }
 
   Map<LoadingStatus, int> get _boardStatusMap =>
     _boardStatusMapCache == null

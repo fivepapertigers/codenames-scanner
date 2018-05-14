@@ -1,4 +1,5 @@
 PODS:
+  - Alamofire (4.7.2)
   - camera (0.0.1):
     - Flutter
   - Flutter (1.0.0)
@@ -6,12 +7,15 @@ PODS:
     - Flutter
   - path_provider (0.0.1):
     - Flutter
+  - TesseractOCRiOS (4.0.0)
 
 DEPENDENCIES:
+  - Alamofire (~> 4.7)
   - camera (from `Pods/.symlinks/plugins/camera-0.1.2/ios`)
   - Flutter (from `Pods/.symlinks/flutter/ios`)
   - image_picker (from `Pods/.symlinks/plugins/image_picker-0.3.1/ios`)
   - path_provider (from `Pods/.symlinks/plugins/path_provider-0.4.0/ios`)
+  - TesseractOCRiOS (= 4.0.0)
 
 EXTERNAL SOURCES:
   camera:
@@ -24,11 +28,13 @@ EXTERNAL SOURCES:
     :path: Pods/.symlinks/plugins/path_provider-0.4.0/ios
 
 SPEC CHECKSUMS:
+  Alamofire: e4fa87002c137ba2d8d634d2c51fabcda0d5c223
   camera: be01db3b2193839f9af56a9db99b7fea444d35f3
   Flutter: 9d0fac939486c9aba2809b7982dfdbb47a7b0296
   image_picker: ee00aab0487cedc80a304085219503cc6d0f2e22
   path_provider: 09407919825bfe3c2deae39453b7a5b44f467873
+  TesseractOCRiOS: 90638afbe43d082433f2e76b384c7901d23956df
 
-PODFILE CHECKSUM: 0420ab312a523ae0eecfb1fc19ea51dd82cc17c7
+PODFILE CHECKSUM: 2df596c24a4e67778033b67c2d0d80fe49cc27dc
 
 COCOAPODS: 1.4.0

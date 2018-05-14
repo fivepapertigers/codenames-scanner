@@ -39,7 +39,7 @@ Future<void> _processCard (Store<AppState> store, int row, int col, Corners coor
 //  Run OCR
   OcrDocument ocrResult = await runOcr(cardImage.file.path, store.state.currentLanguage);
 //  Find term and confidence
-  List<List<String>> textLines = ocrResult.lines.map(
+  List<List<String>> textLines = ocrResult.lines == null ? [] : ocrResult.lines.map(
     (line) => line.words.map((word) => word.text).toList()
   ).toList();
   TermResult termResult = findTermFromLinesOfText(textLines);
@@ -113,8 +113,8 @@ Future<void> loadDevData (Store<AppState> store) async {
       new AppState(
         board: await generateFakeBoard(),
         gridCorners: new Corners(
-          new Offset(50.0, 50.0), new Offset(200.0, 50.0),
-          new Offset(50.0, 200.0), new Offset(200.0, 200.0)
+          new Offset(50.0, 50.0), new Offset(1000.0, 50.0),
+          new Offset(50.0, 1000.0), new Offset(1000.0, 1000.0)
         ),
         cameras: [],
         boardImage: await loadAssetImage('assets/fake-image.jpg'),

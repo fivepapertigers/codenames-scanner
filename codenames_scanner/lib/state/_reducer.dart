@@ -13,7 +13,6 @@ AppState appReducer(AppState state, action) {
 
 
 TransientAppState transientReducer(TransientAppState state, action) {
-
   if (action is ClearBoard) {
     return state..board = generateNewBoard();
   } else if (action is AddTermToCard) {
@@ -78,6 +77,11 @@ TransientAppState transientReducer(TransientAppState state, action) {
       ..editCardLocation = [action.row, action.col];
   } else if (action is LoadDevState) {
     return TransientAppState.fromAppState(action.state);
+  } else if (action is ReorderCards) {
+    Map<CardTypes, List<CardPosition>> cardListOrder =
+      state.cardListOrder == null ? {} : state.cardListOrder;
+    cardListOrder[action.cardType] = action.positions;
+    return state..cardListOrder = cardListOrder;
   }
 
   return state;

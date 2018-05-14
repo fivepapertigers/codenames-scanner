@@ -1,16 +1,9 @@
-import 'package:codenames_scanner/models.dart' show Corners, ImageModel, BoardCard;
+import 'package:codenames_scanner/models.dart' show Corners, ImageModel, BoardCard, CardWithPosition;
 import 'package:flutter/material.dart' show Offset;
 import 'package:codenames_scanner/utils/util.dart';
 
 export 'package:flutter/material.dart' show Offset;
 
-class CardWithPosition {
-  final int row;
-  final int col;
-  final BoardCard card;
-
-  CardWithPosition(this.row, this.col, this.card);
-}
 
 List<Offset> getMidPoints(Offset start, Offset end) {
 
@@ -80,4 +73,5 @@ List<CardWithPosition> cardsList(List<List<BoardCard>> board) =>
     ),
     initial: new List<CardWithPosition>());
 
-
+List<CardWithPosition> filteredCardsList(List<List<BoardCard>> board, bool Function(CardWithPosition) filterFunc) =>
+  cardsList(board).where(filterFunc).toList();

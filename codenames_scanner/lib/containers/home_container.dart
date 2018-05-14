@@ -29,7 +29,7 @@ class HomeViewModel {
   static HomeViewModel fromStore(Store<AppState> store) {
     return new HomeViewModel(
       currentLanguageStatus: store.state.currentLanguageStatus,
-      loadLanguage: () => loadCurrentLanguage(store),
+      loadLanguage: () => loadCurrentLanguage(store)
     );
   }
 
