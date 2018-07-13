@@ -1,0 +1,3 @@
+To mark a card as "covered", simply tap on that card in either the Grid view (GRID ICON) or the List view (LIST_ICON).
+
+To reorder the cards in List view (LIST_ICON), press and hold, then drag that card to a new location.

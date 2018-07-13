@@ -1,0 +1,7 @@
+First, layout your Codenames cards into a 5 x 5 grid, with all of the cards facing in the same direction. The board will be easiest to scan if the cards are all a similar distance apart.
+
+Once the board is ready, click the <CAMERA_ICON> to begin scanning the board. Your device's camera should load. All you need to do is capture your board. Don't worry about being too accurate, you can always adjust the board in the next step.
+
+After you've taken the picture, a red grid will appear over the image, which will let you adjust the grid to tell the scanner where the cards are. Make sure that each word is completely inside one of the boxes, by dragging the corners to roughly align with the board images.
+
+Click the <CHECK_ICON> when you're finished adjusting the board, then wait for your results!

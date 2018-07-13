@@ -1,0 +1,1 @@
+If you're not happy with the scan results, you can easily re-scan the image. But if just a few cards need to be changed or show ???, then you can manually enter a term on a card by double-tapping the card. This takes you to a screen where you can manually type in the card text.
